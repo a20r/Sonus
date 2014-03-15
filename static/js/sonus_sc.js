@@ -51,13 +51,11 @@ sonus.updateWidget = function (track_url, title, genre) {
 }
 
 sonus.scQuery = function (queryTerm) {
-    $("#resultsTable").html("");
+    $(".result").remove();
     SC.get('/tracks', {q: queryTerm}, function(tracks) {
         tracks.map(function (val) {
-            $("#resultsTable").append(
-                "<tr onclick=\'sonus.updateWidget(\"" + val.permalink_url + "\", \"" +
-                val.title + "\", \"" + val.genre + "\")\'><td>" +
-                val.title + "</td></tr>"
+            $("#resultsTable").append('<li class="result"><a>'+val.title+' '+val.genre+'</a></li>');
+			
             );
         });
     });
