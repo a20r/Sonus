@@ -37,11 +37,15 @@ z-index:-999;
 
 .albumTitle{
 position: absolute; 
-bottom :5px; 
+bottom :10px; 
 font-size: 100% !important;
 left: 0; 
-width: 200px;
+
+
+width: 190px;
 color: #FFFFFF !important;
+background-color: rgb(0, 0, 0);
+background-color: rgba(0, 0, 0, 0.6);
 }
 
 .form-container
@@ -103,7 +107,7 @@ color: #FFFFFF !important;
 .container > header {
 	margin: 0 auto;
 	padding: 8em 2em;
-	padding-left: 400px;
+	
 	background: rgba(0,0,0,0.05);
 }
 
