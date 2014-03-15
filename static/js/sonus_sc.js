@@ -68,13 +68,19 @@ sonus.scQuery = function (queryTerm) {
 
             }
 
-            $("#resultsTable").append('<div class="item image" id="'+val.id+'"><img class="album" src='+val.artwork_url+'><span class="albumTitle">'+val.title+'</span> </div>');
+            $("#resultsTable").append('<div class="item image" id="'+val.id+'" data-track_url="'+val.permalink_url+'" data-title="'+val.title+'" data-genre="'+val.genre+'"><img class="album" src='+val.artwork_url+'><span class="albumTitle">'+val.title+'</span> </div>');
 			//<a>'+val.title+' '+val.genre+'</a>
             
         });
     });
     $('#resultsTable').css('position','static');
+
+    
+    
+      
 }
+
+
 
 sonus.init = function () {
     SC.initialize({
@@ -86,6 +92,10 @@ sonus.init = function () {
         $("#query").val("");
         return false;
     });
+    
+
+    
+    
 }
 
 // Sets the locaction event handlers
@@ -111,3 +121,14 @@ sonus.getLocation = function (onSuccess, onError) {
 
 window.onload = sonus.init;
 
+    $(document).ready(function () {
+
+
+    $(".item").on('click', function (event) {
+                    alert(event.target.id);
+
+        sonus.updateWidget(event.target.data-track_url,event.target.data-title,event.target.data-genre);
+        
+    });
+    
+    });
