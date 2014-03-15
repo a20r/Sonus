@@ -2,8 +2,14 @@
 import config
 from flask import Response, jsonify, render_template, request, g
 import os
+<< << << < HEAD
 from db import DB
 
+== == == =
+import time
+import db
+from threading import Timer
+>>>>>> > 5f4f200938d1dd9152f35d544f9ade362de2569b
 MIME_DICT = {
     "js": "text/javascript",
     "css": "text/css",
@@ -38,9 +44,43 @@ def get_index():
     )
 
 
-@config.app.route("/userLoggedIn", methods=["POST"])
-def userLoggedIn():
-    print 'user logged in ', request.form['id']
+@config.app.route("/song", methods=["POST"])
+def song():
+    db = get_db()
+
+    userId = request.form.get('userId')
+    songId = request.form.get('songId')
+    latitude = request.form.get('latitude')
+    longitude = request.form.get('longitude')
+
+    song = db.DB.find_song({'songId': songId})
+    song = song or db.DB.add_song({'songId': songId})
+    now = song.setdefault('now', {})
+    songObj = {'userId': userId,
+               'location': {'latitude': latitude,
+                            'longitude': longitude},
+               'time': time.time()}
+    now[userId] = songObj
+    t = Timer(200.0, remove, [songObj, songId])
+    t.start()
+
+    total = song.setdefault('total', {})
+    total[userId] = songObj
     return jsonify({'status': 'ok'})
 
 
+@config.app.route("/desong", methods=["POST"])
+def desong():
+    userId = request.form.get('userId')
+    songId = request.form.get('songId')
+
+    song = db.DB.find_song({'songId': songId})
+    if userId in song['now'].keys():
+        del song['now'][userId]
+
+
+def remove(songObj):
+    db = get_db()
+    song = db.find_song({'songId': songId})
+    if songObj['userId'] in song['now'].keys():
+        del song['now'][songObj['userId']]

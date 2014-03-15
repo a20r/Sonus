@@ -15,7 +15,7 @@ def run(host, port):
 
     import config
     import pageserver
-
+    import db
     config.app.run(host=host, port=int(port), debug=True)
 
 
