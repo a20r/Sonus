@@ -54,13 +54,13 @@ sonus.scQuery = function (queryTerm) {
      $("#logo").hide();
      $("#intro").hide();
      $('#resultsTable').css('padding-left',32);
-    
+
     var $container = $('#resultsTable');
     $container.masonry({
       columnWidth: 200,
       itemSelector: '.item'
     });
-    
+
     SC.get('/tracks', {q: queryTerm}, function(tracks) {
         tracks.map(function (val) {
             if (val.artwork_url==null){
@@ -68,16 +68,26 @@ sonus.scQuery = function (queryTerm) {
 
             }
 
-            $("#resultsTable").append('<div class="item image" id="'+val.id+'" data-track_url="'+val.permalink_url+'" data-title="'+val.title+'" data-genre="'+val.genre+'"><img class="album" src='+val.artwork_url+'><span class="albumTitle">'+val.title+'</span> </div>');
-			//<a>'+val.title+' '+val.genre+'</a>
-            
+            $("#resultsTable").append(
+                '<div class="item image" id="' +
+                val.id+'" data-track_url="' +
+                val.permalink_url + '" data-title="' + val.title +
+                '" data-genre="' + val.genre +
+                '"><img class="album" src=' + val.artwork_url +
+                '><span class="albumTitle">'+val.title+'</span> </div>'
+            );
+
+            $("#" + val.id).click(function(event) {
+                console.log(event);
+                sonus.updateWidget(
+                    event.currentTarget.dataset.track_url,
+                    event.currentTarget.dataset.title,
+                    event.currentTarget.dataset.genre
+                );
+            });
         });
     });
     $('#resultsTable').css('position','static');
-
-    
-    
-      
 }
 
 
@@ -92,10 +102,6 @@ sonus.init = function () {
         $("#query").val("");
         return false;
     });
-    
-
-    
-    
 }
 
 // Sets the locaction event handlers
@@ -127,8 +133,6 @@ window.onload = sonus.init;
     $(".item").on('click', function (event) {
                     alert(event.target.id);
 
-        sonus.updateWidget(event.target.data-track_url,event.target.data-title,event.target.data-genre);
         
     });
-    
-    });
+});
