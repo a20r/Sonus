@@ -26,7 +26,7 @@ sonus.updateWidget = function (track_url, title, genre) {
                 data: {
                     latitude: position.coords.latitude,
                     longitude: position.coords.longitude,
-                    title: title,
+                    songId: title,
                     genre: genre,
                     userId: sonus.userId
                 }
@@ -38,7 +38,7 @@ sonus.updateWidget = function (track_url, title, genre) {
                 data: {
                     latitude: null,
                     longitude: null,
-                    title: title,
+                    songId: title,
                     genre: genre,
                     userId: sonus.userId
                 }
@@ -54,13 +54,13 @@ sonus.scQuery = function (queryTerm) {
      $("#logo").hide();
      $("#intro").hide();
      $('#resultsTable').css('padding-left',32);
-    
+
     var $container = $('#resultsTable');
     $container.masonry({
       columnWidth: 200,
       itemSelector: '.item'
     });
-    
+
     SC.get('/tracks', {q: queryTerm}, function(tracks) {
         tracks.map(function (val) {
             if (val.artwork_url==null){
@@ -68,13 +68,29 @@ sonus.scQuery = function (queryTerm) {
 
             }
 
-            $("#resultsTable").append('<div class="item image" id="'+val.id+'"><img class="album" src='+val.artwork_url+'><span class="albumTitle">'+val.title+'</span> </div>');
-			//<a>'+val.title+' '+val.genre+'</a>
-            
+            $("#resultsTable").append(
+                '<div class="item image" id="' +
+                val.id+'" data-track_url="' +
+                val.permalink_url + '" data-title="' + val.title +
+                '" data-genre="' + val.genre +
+                '"><img class="album" src=' + val.artwork_url +
+                '><span class="albumTitle">'+val.title+'</span> </div>'
+            );
+
+            $("#" + val.id).click(function(event) {
+                console.log(event);
+                sonus.updateWidget(
+                    event.currentTarget.dataset.track_url,
+                    event.currentTarget.dataset.title,
+                    event.currentTarget.dataset.genre
+                );
+            });
         });
     });
     $('#resultsTable').css('position','static');
 }
+
+
 
 sonus.init = function () {
     SC.initialize({
@@ -111,3 +127,12 @@ sonus.getLocation = function (onSuccess, onError) {
 
 window.onload = sonus.init;
 
+    $(document).ready(function () {
+
+
+    $(".item").on('click', function (event) {
+                    alert(event.target.id);
+
+        
+    });
+});

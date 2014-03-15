@@ -32,7 +32,7 @@ position: relative;
 {
 top:0px;
 position:static;
-z-index:-10;
+z-index:-999;
 }
 
 .albumTitle{
