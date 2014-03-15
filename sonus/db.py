@@ -25,19 +25,27 @@ class DB(object):
             self.client.disconnect()
             self.state = "DISCONNECTED"
 
-    # SONG FUNCTIONS
-    def update_song(self, song):
-        self.songs.update({'songId': song['songId']}, song, upsert=True)
+    def purge(self):
+        self.users.remove()
+        self.songs.remove()
 
+    # SONG FUNCTIONS
     def add_song(self, song):
-        if self.find_song({'songId': song['songId']}) is None:
+        if self.find_song(song) is None:
             self.songs.insert(song)
 
     def remove_song(self, song):
         self.songs.remove(song)
 
+    def update_song(self, old, new):
+        self.songs.update(old, new, upsert=True)
+
     def find_song(self, song):
         result = self.songs.find_one(song)
+        return result
+
+    def find_songs(self, song):
+        result = self.songs.find(song)
         return result
 
     # USER FUNCTIONS
