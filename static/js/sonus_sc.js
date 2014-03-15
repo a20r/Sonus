@@ -58,7 +58,7 @@ sonus.scQuery = function (queryTerm) {
 
     var $container = $('#resultsTable');
     $container.masonry({
-      columnWidth: 200,
+      
       itemSelector: '.item'
     });
 
@@ -83,7 +83,7 @@ sonus.scQuery = function (queryTerm) {
                 val.id+'" data-track_url="' +
                 val.permalink_url + '" data-title="' + val.title +
                 '" data-genre="' + val.genre +
-                '"><img class="album" src=' + val.artwork_url.replace("large","original") +
+                '"><img class="album" onerror="imgError('+val.id+')" src=' + val.artwork_url.replace("large","original") +
                 '><span class="albumTitle">'+val.title+'</span> </div>'
                 
                 
@@ -106,6 +106,9 @@ sonus.scQuery = function (queryTerm) {
     $('#resultsTable').css('position','static');
 }
 
+ function imgError(valId){
+        $("#"+valId).remove();
+    }
 
 
 sonus.init = function () {
@@ -144,7 +147,10 @@ sonus.getLocation = function (onSuccess, onError) {
 window.onload = sonus.init;
 
     $(document).ready(function () {
-
+        $("#logo").hide();
+    $("#logo").fadeIn(2000);
+        $("#intro").hide();
+    $("#intro").fadeIn(2000);
 
     $(".item").on('click', function (event) {
                     alert(event.target.id);
