@@ -18,14 +18,17 @@
   <body>
       <div id="fb-root"></div>
       <script>
+        var userId;
         window.fbAsyncInit = function() {
           FB.init({
             appId      : '1459115077651199',
             status     : true,
             xfbml      : true
           });
-
-          var userId;
+          FB.login(function(response) {
+            // handle the response
+          });
+          
           FB.Event.subscribe('auth.authResponseChange', function(response) {
               if (response.status === 'connected') {
                 console.log('Logged in');
