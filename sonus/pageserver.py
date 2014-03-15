@@ -45,43 +45,47 @@ def get_index():
 @config.app.route("/song", methods=["POST"])
 def song():
     db = get_db()
-    print request.form
     userId = request.form.get('userId')
     songId = request.form.get('songId')
     latitude = request.form.get('latitude')
     longitude = request.form.get('longitude')
 
-    song = db.get_or_create_song(songId)
+    song = db.find_song({'songId': songId}) or db.add_song({'songId': songId})
+    songObj = {
+        'userId': userId,
+        'location': {
+            'latitude': latitude,
+            'longitude': longitude
+        },
+        'time': time.time()
+    }
 
-    songObj = {'userId': userId,
-               'location': {'latitude': latitude,
-                            'longitude': longitude},
-               'time': time.time()}
-    song.setdefault('now',{})[userId] = songObj
-    song.setdefault('total',{})[userId] = songObj
+    song.setdefault('now', []).append(songObj)
+    song.setdefault('total', []).append(songObj)
     db.update_song(song)
-    t = Timer(200.0, remove, [songObj, songId])
+    t = Timer(200.0, remove, [userId, songId])
     t.start()
-
-
     return jsonify({'status': 'ok'})
 
 
 @config.app.route("/desong", methods=["POST"])
 def desong():
-    db = get_db()
     userId = request.form.get('userId')
     songId = request.form.get('songId')
+    remove(userId, songId)
 
-    song = db.get_or_create_song(songId)
-    if userId in song['now'].keys():
-        del song['now'][userId]
+
+def remove(userId, songId):
+    db = get_db()
+    user = db.songs.find({'songId': songId, 'now.userId': userId})
+    song = db.find_song({'songId': songId})
+    song['all'].remove(user)
     db.update_song(song)
 
 
-
-def remove(songObj):
-    db = get_db()
-    song = db.get_or_create_song(songId)
-    if songObj['userId'] in song['now'].keys():
-        del song['now'][songObj['userId']]
+# @config.app.route("/songsNearMe", methods=["GET"])
+# def songsNearMe():
+#     db = get_db()
+#
+#     latitude = request.form.get('latitude')
+#     longitude = request.form.get('longitude')
