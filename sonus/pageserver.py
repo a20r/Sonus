@@ -82,6 +82,11 @@ def remove(userId, songId):
     song['all'].remove(user)
     db.update_song(song)
 
+@config.app.route("/purge", methods=["GET"])
+def purge():
+    db.songs.remove()
+    db.user.remove()
+
 
 # @config.app.route("/songsNearMe", methods=["GET"])
 # def songsNearMe():
