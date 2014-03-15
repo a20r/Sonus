@@ -66,9 +66,18 @@ sonus.scQuery = function (queryTerm) {
         tracks.map(function (val) {
             if (val.artwork_url==null){
             val.artwork_url=val.user.avatar_url;
-
+            if (val.artwork_url.indexOf('default_avatar_') == -1 ){
+            val.artwork_url=val.artwork_url.replace("large","original");
             }
-
+            
+            }
+            else{
+            val.artwork_url=val.artwork_url.replace("large","original");
+            
+            }
+            if(val.artwork_url.indexOf('.jpg') == -1){
+            val.artwork_url='/imgs/albumplaceholder.png';
+            }
             $("#resultsTable").append(
                 '<div class="item image" id="' +
                 val.id+'" data-track_url="' +
@@ -93,6 +102,7 @@ sonus.scQuery = function (queryTerm) {
             });
         });
     });
+    $('#resultsTable').click()
     $('#resultsTable').css('position','static');
 }
 
