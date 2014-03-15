@@ -1,6 +1,8 @@
 
 var sonus = sonus || {};
 
+sonus.userId = "testId";
+
 sonus.greedyQuery = function (queryTerm) {
     SC.get('/tracks', {q: queryTerm}, function(tracks) {
         var track_url = tracks[0].permalink_url;
@@ -11,41 +13,48 @@ sonus.greedyQuery = function (queryTerm) {
 }
 
 sonus.updateWidget = function (track_url, title, genre) {
-    SC.oEmbed(track_url, {auto_play: false}, function (oEmbed) {
-        $("#widget").html(oEmbed.html);
-    });
 
-    sonus.getLocation(function (position) {
-        $.ajax({
-            url: "/songs",
-            type: "POST",
-            data: {
-                latitude: position.coords.latitude,
-                longitude: position.coords.longitude,
-                title: title,
-                genre: genre
-            }
+    if (sonus.userId != null) {
+        SC.oEmbed(track_url, {auto_play: false}, function (oEmbed) {
+            $("#widget").html(oEmbed.html);
         });
-    }, function (position) {
-        $.ajax({
-            url: "/songs",
-            type: "POST",
-            data: {
-                latitude: null,
-                longitude: null,
-                title: title,
-                genre: genre
-            }
+
+        sonus.getLocation(function (position) {
+            $.ajax({
+                url: "/song",
+                type: "POST",
+                data: {
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude,
+                    title: title,
+                    genre: genre,
+                    userId: sonus.userId
+                }
+            });
+        }, function (position) {
+            $.ajax({
+                url: "/song",
+                type: "POST",
+                data: {
+                    latitude: null,
+                    longitude: null,
+                    title: title,
+                    genre: genre,
+                    userId: sonus.userId
+                }
+            });
         });
-    });
+    } else {
+        alert("You are not logged in: Ammaar will make this pretty");
+    }
 
 }
 
 sonus.scQuery = function (queryTerm) {
-    $("#resultTable").html("");
+    $("#resultsTable").html("");
     SC.get('/tracks', {q: queryTerm}, function(tracks) {
         tracks.map(function (val) {
-            $("#resultTable").append(
+            $("#resultsTable").append(
                 "<tr onclick=\'sonus.updateWidget(\"" + val.permalink_url + "\", \"" +
                 val.title + "\", \"" + val.genre + "\")\'><td>" +
                 val.title + "</td></tr>"
@@ -59,9 +68,10 @@ sonus.init = function () {
         client_id: '0020643627fb540d480f7c4434796d2c'
     });
 
-    $("#searchButton").click(function () {
+    $("#form").on("submit", function () {
         sonus.scQuery($("#query").val());
-        console.log("here");
+        $("#query").val("");
+        return false;
     });
 }
 
@@ -76,7 +86,7 @@ sonus.getLocation = function (onSuccess, onError) {
             maximumAge: 0
         };
 
-        navigator.geolocation.watchPosition(
+        navigator.geolocation.getCurrentPosition(
             onSuccess,
             onError,
             extraGeoParam

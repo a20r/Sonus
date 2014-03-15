@@ -15,7 +15,8 @@ MIME_DICT = {
     "imgs": "image/png",
     "libraries": "text/javascript",
     "data": "text/csv",
-    "sounds":  "audio/vnd.wav"
+    "sounds":  "audio/vnd.wav",
+    "fonts": "font/opentype"
 }
 
 STATIC_DIR = "static/"
@@ -46,19 +47,27 @@ def get_index():
 @config.app.route("/song", methods=["POST"])
 def song():
     db = get_db()
-
-    # form
-    data = json.loads(request.data)
-    userId = data.get('userId')
-    songId = data.get('songId')
-    latitude = data.get('latitude')
-    longitude = data.get('longitude')
-
-    # add song if it does not exists
-    db.add_song()
-
-    # create user dict
-    user = {
+# <<<<<<< HEAD
+#
+#     # form
+#     data = json.loads(request.data)
+#     userId = data.get('userId')
+#     songId = data.get('songId')
+#     latitude = data.get('latitude')
+#     longitude = data.get('longitude')
+#
+#     # add song if it does not exists
+#     db.add_song()
+#
+#     # create user dict
+#     user = {
+# =======
+    userId = request.form.get('userId')
+    songId = request.form.get('songId')
+    latitude = request.form.get('latitude')
+    longitude = request.form.get('longitude')
+    song = db.find_song({'songId': songId}) or db.add_song({'songId': songId})
+    songObj = {
         'userId': userId,
         'location': {
             'latitude': latitude,
@@ -69,8 +78,8 @@ def song():
 
     # create song dict
     song = {"songId": songId}
-    song.setdefault('now', []).append(user)
-    song.setdefault('total', []).append(user)
+    song.setdefault('now', []).append(songObj)
+    song.setdefault('total', []).append(songObj)
 
     # update song details (i.e. "now" and "total" fields)
     db.update_song({"songId": songId}, song)
@@ -99,6 +108,13 @@ def remove_user_from_now(userId, songId):
     song['all'].remove(user)
     db.update_song(song)
 
+
+@config.app.route("/purge", methods=["GET"])
+def purge():
+    db = get_db()
+    db.songs.remove()
+    db.users.remove()
+    return jsonify({'status': 'ok'})
 
 # @config.app.route("/songsNearMe", methods=["GET"])
 # def songsNearMe():

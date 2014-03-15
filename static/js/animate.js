@@ -8,15 +8,6 @@ $( document ).ready(function() {
 
   }); 
 
-  map = new GMaps({
-    div: '#map_canvas',
-    lat: 51.5072,
-    lng: -0.1000 
-  });
-  
-  $("#chart1").dxPieChart({});
-
-});
 
 
 update_map = function (response)
