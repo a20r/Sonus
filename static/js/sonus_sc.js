@@ -12,13 +12,11 @@ sonus.greedyQuery = function (queryTerm) {
     });
 }
 
-sonus.updateWidget = function (track_url, title, genre,valId) {
+sonus.updateWidget = function (track_url, title, genre, valId) {
 
     if (sonus.userId != null) {
-
-        
         SC.oEmbed(track_url, {auto_play: false}, function (oEmbed) {
-            $("#"+valId).html(oEmbed.html);
+            $("#" + valId).html(oEmbed.html);
         });
 
         sonus.getLocation(function (position) {
@@ -28,7 +26,7 @@ sonus.updateWidget = function (track_url, title, genre,valId) {
                 data: {
                     latitude: position.coords.latitude,
                     longitude: position.coords.longitude,
-                    songId: title,
+                    songId: valId,
                     genre: genre,
                     userId: sonus.userId
                 }
@@ -40,7 +38,7 @@ sonus.updateWidget = function (track_url, title, genre,valId) {
                 data: {
                     latitude: null,
                     longitude: null,
-                    songId: title,
+                    songId: valId,
                     genre: genre,
                     userId: sonus.userId
                 }
@@ -58,58 +56,49 @@ sonus.scQuery = function (queryTerm) {
 
     var $container = $('#resultsTable');
     $container.masonry({
-      
+      columnWidth: 200,
       itemSelector: '.item'
     });
 
     SC.get('/tracks', {q: queryTerm}, function(tracks) {
-        tracks.map(function (val) {
-            if (val.artwork_url==null){
-            val.artwork_url=val.user.avatar_url;
-            if (val.artwork_url.indexOf('default_avatar_') == -1 ){
-            val.artwork_url=val.artwork_url.replace("large","original");
-            }
-            
-            }
-            else{
-            val.artwork_url=val.artwork_url.replace("large","original");
-            
-            }
-            if(val.artwork_url.indexOf('.jpg') == -1){
-            val.artwork_url='/imgs/albumplaceholder.png';
-            }
-            $("#resultsTable").append(
-                '<div class="item image" id="' +
-                val.id+'" data-track_url="' +
-                val.permalink_url + '" data-title="' + val.title +
-                '" data-genre="' + val.genre +
-                '"><img class="album" onerror="imgError('+val.id+')" src=' + val.artwork_url.replace("large","original") +
-                '><span class="albumTitle">'+val.title+'</span> </div>'
-                
-                
-
-                
-            ).hide();
-			$("#resultsTable").fadeIn('slow');
-            $("#" + val.id).click(function(event) {
-                console.log(event);
-                sonus.updateWidget(
-                    event.currentTarget.dataset.track_url,
-                    event.currentTarget.dataset.title,
-                    event.currentTarget.dataset.genre,
-                    val.id
-                );
-            });
-        });
+        tracks.map(sonus.manageTracks);
     });
     $('#resultsTable').click()
     $('#resultsTable').css('position','static');
 }
 
- function imgError(valId){
-        $("#"+valId).remove();
+sonus.manageTracks = function (val) {
+    if (val.artwork_url==null){
+        val.artwork_url=val.user.avatar_url;
+        if (val.artwork_url.indexOf('default_avatar_') == -1 ){
+            val.artwork_url=val.artwork_url.replace("large","original");
+        }
+    } else {
+        val.artwork_url=val.artwork_url.replace("large","original");
     }
+    if(val.artwork_url.indexOf('.jpg') == -1){
+        val.artwork_url='/imgs/albumplaceholder.png';
+    }
+    $("#resultsTable").append(
+        '<div class="item image" id="' +
+        val.id+'" data-track_url="' +
+        val.permalink_url + '" data-title="' + val.title +
+        '" data-genre="' + val.genre +
+        '"><img class="album" src=' + val.artwork_url.replace("large","original") +
+        '><span class="albumTitle">'+val.title+'</span> </div>'
 
+    ).hide();
+    $("#resultsTable").fadeIn('slow');
+    $("#" + val.id).click(function(event) {
+        console.log(event);
+        sonus.updateWidget(
+            event.currentTarget.dataset.track_url,
+            event.currentTarget.dataset.title,
+            event.currentTarget.dataset.genre,
+            val.id
+        );
+    });
+}
 
 sonus.init = function () {
     SC.initialize({
@@ -120,6 +109,28 @@ sonus.init = function () {
         sonus.scQuery($("#query").val());
         $("#query").val("");
         return false;
+    });
+
+    $("#nearMe").click(function () {
+        sonus.getLocation(function (position) {
+            $.getJSON("/near/" + position.coords.latitude + "/" +
+                position.coords.longitude + "/5", function(json) {
+                    $('#resultsTable').html("");
+                    var $container = $('#resultsTable');
+                        $container.masonry({
+                        columnWidth: 200,
+                        itemSelector: '.item'
+                    });
+                    songs = json["songs"];
+                    songs.forEach(function(song) {
+                        SC.get("/tracks/" + song["songId"], function (scJson) {
+                            sonus.manageTracks(scJson);
+                        });
+                    });
+                    $('#resultsTable').click()
+                    $('#resultsTable').css('position','static');
+            });
+        });
     });
 }
 
