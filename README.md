@@ -1,8 +1,7 @@
 # Sonus
-
 Music based on your location
 
 
-## Authors
+## Authors (in no particular order)
 - Alex Wallar
 - Chris Choi
