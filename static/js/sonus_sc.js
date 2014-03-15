@@ -1,7 +1,7 @@
 
 var sonus = sonus || {};
 
-sonus.userId = "testId";
+sonus.userId = null;
 
 sonus.greedyQuery = function (queryTerm) {
     SC.get('/tracks', {q: queryTerm}, function(tracks) {
