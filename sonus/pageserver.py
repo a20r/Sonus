@@ -5,8 +5,9 @@ import os
 from db import DB
 
 import time
-import db
+
 from threading import Timer
+
 MIME_DICT = {
     "js": "text/javascript",
     "css": "text/css",
@@ -44,40 +45,43 @@ def get_index():
 @config.app.route("/song", methods=["POST"])
 def song():
     db = get_db()
-
+    print request.form
     userId = request.form.get('userId')
     songId = request.form.get('songId')
     latitude = request.form.get('latitude')
     longitude = request.form.get('longitude')
 
-    song = db.find_song({'songId': songId})
-    song = song or db.DB.add_song({'songId': songId})
-    now = song.setdefault('now', {})
+    song = db.get_or_create_song(songId)
+
     songObj = {'userId': userId,
                'location': {'latitude': latitude,
                             'longitude': longitude},
                'time': time.time()}
-    now[userId] = songObj
+    song.setdefault('now',{})[userId] = songObj
+    song.setdefault('total',{})[userId] = songObj
+    db.update_song(song)
     t = Timer(200.0, remove, [songObj, songId])
     t.start()
 
-    total = song.setdefault('total', {})
-    total[userId] = songObj
+
     return jsonify({'status': 'ok'})
 
 
 @config.app.route("/desong", methods=["POST"])
 def desong():
+    db = get_db()
     userId = request.form.get('userId')
     songId = request.form.get('songId')
 
-    song = db.DB.find_song({'songId': songId})
+    song = db.get_or_create_song(songId)
     if userId in song['now'].keys():
         del song['now'][userId]
+    db.update_song(song)
+
 
 
 def remove(songObj):
     db = get_db()
-    song = db.find_song({'songId': songId})
+    song = db.get_or_create_song(songId)
     if songObj['userId'] in song['now'].keys():
         del song['now'][songObj['userId']]

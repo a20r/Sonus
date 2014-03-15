@@ -16,54 +16,50 @@
   </head>
 
   <body>
-      <div id="fb-root"></div>
+<div id="fb-root"></div>
       <script>
+        var userId;
         window.fbAsyncInit = function() {
           FB.init({
             appId      : '1459115077651199',
             status     : true,
             xfbml      : true
           });
-          var userId;
+          FB.login(function(response) {
+            // handle the response
+          });
+          
           FB.Event.subscribe('auth.authResponseChange', function(response) {
               if (response.status === 'connected') {
                 console.log('Logged in');
                 
                 FB.api('/me?fields=id', function(response) {
                     userId=response.id;
-                    $.ajax({
-                      type: "POST",
-                      url: 'song',
-                      data: { id: userId},
-                    });
                     
+
                 });
               } else {
                 FB.login();
               }
             });
-        
-        
-          
-          
         };
-
-
-
-        (function(d, s, id){
+         
+         <script>(function(d, s, id) {
            var js, fjs = d.getElementsByTagName(s)[0];
-           if (d.getElementById(id)) {return;}
+           if (d.getElementById(id)) return;
            js = d.createElement(s); js.id = id;
-           js.src = "//connect.facebook.net/en_US/all.js";
+           js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=1459115077651199";
            fjs.parentNode.insertBefore(js, fjs);
-         }(document, 'script', 'facebook-jssdk'));
+         }(document, 'script', 'facebook-jssdk'));</script>
+         
       </script>
-      
-      
+
     <div class="container">
+        
       <div class='form-container'>
         <p>What's playing around me?</p>
         <form id="form">
+            
           <input id="query" type="text" placeholder="Enter song name">
           <input id="searchButton" type="button" value="Find">
           <img src="/imgs/spinner.gif" id="spinner" style="display:none;">
