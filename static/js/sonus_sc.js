@@ -51,14 +51,24 @@ sonus.updateWidget = function (track_url, title, genre) {
 }
 
 sonus.scQuery = function (queryTerm) {
-    $("#resultsTable").html("");
+     $("#logo").hide();
+     $("#intro").hide();
+  
+    
+    var $container = $('#resultsTable');
+    $container.masonry({
+      columnWidth: 200,
+      itemSelector: '.item'
+    });
+    
     SC.get('/tracks', {q: queryTerm}, function(tracks) {
         tracks.map(function (val) {
-            $("#resultsTable").append(
-                "<tr onclick=\'sonus.updateWidget(\"" + val.permalink_url + "\", \"" +
-                val.title + "\", \"" + val.genre + "\")\'><td>" +
-                val.title + "</td></tr>"
-            );
+            if (val.artwork_url=='null'){
+            val.artwork_url='/imgs/albumplaceholder.png';
+            }
+            $("#resultsTable").append('<div class="item image" id="'+val.id+'"><img class="album" src='+val.artwork_url+'><span class="albumTitle">'+val.title+'</span> </div>');
+			//<a>'+val.title+' '+val.genre+'</a>
+            
         });
     });
 }
