@@ -59,7 +59,8 @@
             $('#FBNAME').text(' Welcome, '+response.name);
             sonus.userId = response.id;
           });
-          $('.fa-facebook-square').click(function() {
-              FB.login();
-          });
+          
         }
+        $('#FBLOGIN').click(function() {
+            FB.login();
+        });
