@@ -2,14 +2,11 @@
 import config
 from flask import Response, jsonify, render_template, request, g
 import os
-<< << << < HEAD
 from db import DB
 
-== == == =
 import time
 import db
 from threading import Timer
->>>>>> > 5f4f200938d1dd9152f35d544f9ade362de2569b
 MIME_DICT = {
     "js": "text/javascript",
     "css": "text/css",
@@ -53,7 +50,7 @@ def song():
     latitude = request.form.get('latitude')
     longitude = request.form.get('longitude')
 
-    song = db.DB.find_song({'songId': songId})
+    song = db.find_song({'songId': songId})
     song = song or db.DB.add_song({'songId': songId})
     now = song.setdefault('now', {})
     songObj = {'userId': userId,
