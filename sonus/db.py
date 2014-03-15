@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-import json
-
 import pymongo
 
 
@@ -27,10 +25,12 @@ class DB(object):
             self.state = "DISCONNECTED"
 
     def add_song(self, song):
-        self.songs.insert(song)
+        if self.find_song(song) is None:
+            self.songs.insert(song)
 
     def add_user(self, user):
-        self.users.insert(user)
+        if self.find_user(user) is None:
+            self.users.insert(user)
 
     def remove_song(self, song):
         self.songs.remove(song)

@@ -1,7 +1,11 @@
 
 import config
-from flask import Response, jsonify, render_template, request
+from flask import Response, jsonify, render_template, request, g
 import os
+from db import DB
+import time
+
+from threading import Timer
 
 MIME_DICT = {
     "js": "text/javascript",
@@ -13,6 +17,15 @@ MIME_DICT = {
 }
 
 STATIC_DIR = "static/"
+
+
+def get_db():
+    if not hasattr(g, "db"):
+        g.db = DB()
+        g.db.connect()
+
+    return g.db
+
 
 @config.app.route("/<file_type>/<filename>", methods=["GET"])
 def get_static(file_type, filename):
@@ -27,11 +40,44 @@ def get_index():
         "index.html"
     )
 
-@config.app.route("/userLoggedIn", methods=["POST"])
-def userLoggedIn():
-    print 'user logged in ',request.form['id']
-    return jsonify({'status':'ok'})
+
+@config.app.route("/song", methods=["POST"])
+def song():
+    db = get_db()
+
+    userId = request.form.get('userId')
+    songId = request.form.get('songId')
+    latitude = request.form.get('latitude')
+    longitude = request.form.get('longitude')
+
+    song = db.find_song({'songId': songId})
+    song = song or db.add_song({'songId': songId})
+    now = song.setdefault('now', {})
+    songObj = {'userId': userId,
+               'location': {'latitude': latitude,
+                            'longitude': longitude},
+               'time': time.time()}
+    now[userId] = songObj
+    t = Timer(200.0, remove, [songObj, songId])
+    t.start()
+
+    total = song.setdefault('total', {})
+    total[userId] = songObj
+    return jsonify({'status': 'ok'})
 
 
+@config.app.route("/desong", methods=["POST"])
+def desong():
+    userId = request.form.get('userId')
+    songId = request.form.get('songId')
+
+    song = db.find_song({'songId': songId})
+    if userId in song['now'].keys():
+        del song['now'][userId]
 
 
+def remove(songObj):
+    db = get_db()
+    song = db.find_song({'songId': songId})
+    if songObj['userId'] in song['now'].keys():
+        del song['now'][songObj['userId']]
