@@ -12,11 +12,13 @@ sonus.greedyQuery = function (queryTerm) {
     });
 }
 
-sonus.updateWidget = function (track_url, title, genre) {
+sonus.updateWidget = function (track_url, title, genre,valId) {
 
     if (sonus.userId != null) {
+
+        
         SC.oEmbed(track_url, {auto_play: false}, function (oEmbed) {
-            $("#widget").html(oEmbed.html);
+            $("#"+valId).html(oEmbed.html);
         });
 
         sonus.getLocation(function (position) {
@@ -51,9 +53,8 @@ sonus.updateWidget = function (track_url, title, genre) {
 }
 
 sonus.scQuery = function (queryTerm) {
-     $("#logo").hide();
-     $("#intro").hide();
-     $('#resultsTable').css('padding-left',32);
+     $('#resultsTable').html("")
+
 
     var $container = $('#resultsTable');
     $container.masonry({
@@ -75,14 +76,19 @@ sonus.scQuery = function (queryTerm) {
                 '" data-genre="' + val.genre +
                 '"><img class="album" src=' + val.artwork_url +
                 '><span class="albumTitle">'+val.title+'</span> </div>'
-            );
+                
+                
 
+                
+            ).hide();
+			$("#resultsTable").fadeIn('slow');
             $("#" + val.id).click(function(event) {
                 console.log(event);
                 sonus.updateWidget(
                     event.currentTarget.dataset.track_url,
                     event.currentTarget.dataset.title,
-                    event.currentTarget.dataset.genre
+                    event.currentTarget.dataset.genre,
+                    val.id
                 );
             });
         });
