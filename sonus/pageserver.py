@@ -86,8 +86,8 @@ def remove(userId, songId):
 def purge():
     db = get_db()
     db.songs.remove()
-    db.user.remove()
-
+    db.users.remove()
+    return jsonify({'status': 'ok'})
 
 # @config.app.route("/songsNearMe", methods=["GET"])
 # def songsNearMe():
