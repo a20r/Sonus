@@ -133,7 +133,6 @@ sonus.init = function () {
         });
     });
 
-    $("#nearMe").click();
 }
 
 // Sets the locaction event handlers
@@ -170,17 +169,13 @@ window.onload = sonus.init;
         $("#intro").hide();
       $("#intro").fadeIn(2000, function() {
       $("#intro").fadeOut(1000, function() {
-          
-          //DO YOUR CALLBACK HERE WALLAR
-          
-          
       $("#introTitle").fadeIn(1000);
+
+      $("#nearMe").click();
     });
     });
 
     $(".item").on('click', function (event) {
                     alert(event.target.id);
-
-        
     });
 });
