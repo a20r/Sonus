@@ -26,7 +26,7 @@ sonus.updateWidget = function (track_url, title, genre) {
                 data: {
                     latitude: position.coords.latitude,
                     longitude: position.coords.longitude,
-                    title: title,
+                    songId: title,
                     genre: genre,
                     userId: sonus.userId
                 }
@@ -38,7 +38,7 @@ sonus.updateWidget = function (track_url, title, genre) {
                 data: {
                     latitude: null,
                     longitude: null,
-                    title: title,
+                    songId: title,
                     genre: genre,
                     userId: sonus.userId
                 }
