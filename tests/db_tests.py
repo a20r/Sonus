@@ -12,9 +12,13 @@ class UnitTests(unittest.TestCase):
     def setUp(self):
         self.db = DB()
 
+    def tearDown(self):
+        pass
+
     def test_connect(self):
         self.db.connect()
         self.db.disconnect()
+        self.db.purge()
 
     def test_users(self):
         self.db.connect()
@@ -34,7 +38,7 @@ class UnitTests(unittest.TestCase):
     def test_songs(self):
         self.db.connect()
 
-        # test add and select
+        # add and select
         song = {
             'userId': "chris",
             'songId': "12345",
@@ -44,51 +48,58 @@ class UnitTests(unittest.TestCase):
             },
             'time': time.time()
         }
-        self.db.get_or_create_song(song)
-        print "SONGS:", self.db.find_song({})
-        # result = self.db.find_song(song)
+        self.db.add_song(song)
+        result = self.db.find_song(song)
 
-        # self.assertEquals(song, result)
+        self.assertEquals(song, result)
 
-        # # test remove
-        # self.db.remove_song(song)
-        # result_2 = self.db.find_song(song)
+        # update
+        old_song = dict(song)
+        song["userId"] = "Alex"
+        self.db.update_song(old_song, song)
+        result = self.db.find_song(song)
 
-        # self.assertIsNone(result_2)
+        self.assertEquals(result["userId"], "Alex")
 
-    def test_find_songs(self):
-        self.db.connect()
+        # remove
+        self.db.remove_song(song)
+        result = self.db.find_song(song)
 
-        song_1 = {
-            'userId': "chris",
-            'songId': "12345",
-            'location': {
-                'latitude': 10,
-                'longitude': 20
-            },
-            'time': time.time()
-        }
-        song_2 = {
-            'userId': "chris",
-            'songId': "123456",
-            'location': {
-                'latitude': 10,
-                'longitude': 20
-            },
-            'time': time.time()
-        }
-        self.db.get_or_create_song(song_1)
-        self.db.get_or_create_song(song_2)
+        self.assertIsNone(result)
 
-        self.db.find_song(
-            {
-                'location.latitude': {"$lt": 11, "$gt": 9},
-                'location.longitude': {"$lt": 21, "$gt": 19},
-            }
-        )
+    # def test_find_songs(self):
+    #     self.db.connect()
 
-        self.db.remove_song(song_1)
-        self.db.remove_song(song_2)
+    #     song_1 = {
+    #         'userId': "chris",
+    #         'songId': "12345",
+    #         'location': {
+    #             'latitude': 10,
+    #             'longitude': 20
+    #         },
+    #         'time': time.time()
+    #     }
+    #     song_2 = {
+    #         'userId': "chris",
+    #         'songId': "123456",
+    #         'location': {
+    #             'latitude': 10,
+    #             'longitude': 20
+    #         },
+    #         'time': time.time()
+    #     }
+    #     self.db.add_song(song_1)
+    #     self.db.add_song(song_2)
+
+    #     self.db.find_song(
+    #         {
+    #             'location.latitude': {"$lt": 11, "$gt": 9},
+    #             'location.longitude': {"$lt": 21, "$gt": 19},
+    #         }
+    #     )
+
+    #     self.db.remove_song(song_1)
+    #     self.db.remove_song(song_2)
 
 
 if __name__ == "__main__":

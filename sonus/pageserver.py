@@ -2,6 +2,9 @@
 import config
 from flask import Response, jsonify, render_template, request, g
 import os
+import json
+from geopy import distance
+from geopy import Point
 from db import DB
 
 import time
@@ -51,7 +54,7 @@ def song():
     latitude = request.form.get('latitude')
     longitude = request.form.get('longitude')
     song = db.find_song({'songId': songId}) or db.add_song({'songId': songId})
-    songObj = {
+    user = {
         'userId': userId,
         'location': {
             'latitude': latitude,
@@ -60,27 +63,48 @@ def song():
         'time': time.time()
     }
 
-    song.setdefault('now', []).append(songObj)
-    song.setdefault('total', []).append(songObj)
-    db.update_song(song)
-    t = Timer(200.0, remove, [userId, songId])
+    # create song dict
+    song = {"songId": songId}
+    song.setdefault('now', []).append(user)
+    song.setdefault('total', []).append(user)
+
+    # update song details (i.e. "now" and "total" fields)
+    db.update_song({"songId": songId}, song)
+
+    # remove user from now after certain time
+    t = Timer(1000.0, remove_user_from_now, [userId, songId])
     t.start()
+
     return jsonify({'status': 'ok'})
 
 
 @config.app.route("/desong", methods=["POST"])
 def desong():
+    # form
     userId = request.form.get('userId')
     songId = request.form.get('songId')
-    remove(userId, songId)
+
+    # remove user from "now" field in song
+    remove_user_from_now(userId, songId)
+
+    return jsonify({'status': 'ok'})
 
 
-def remove(userId, songId):
+def remove_user_from_now(userId, songId):
     db = get_db()
-    user = db.songs.find({'songId': songId, 'now.userId': userId})
+
+    # find the song to remove
     song = db.find_song({'songId': songId})
-    song['all'].remove(user)
-    db.update_song(song)
+
+    # remove user from song["now"]
+    for user in song['now']:
+        if user["userId"] == userId:
+            song['now'].remove(user)
+    song.pop("_id")
+
+    # update
+    db.update_song({"songId": song["songId"]}, song)
+
 
 @config.app.route("/purge", methods=["GET"])
 def purge():
@@ -89,9 +113,36 @@ def purge():
     db.users.remove()
     return jsonify({'status': 'ok'})
 
-# @config.app.route("/songsNearMe", methods=["GET"])
-# def songsNearMe():
-#     db = get_db()
-#
-#     latitude = request.form.get('latitude')
-#     longitude = request.form.get('longitude')
+
+@config.app.route("/near/<latitude>/<longitude>/<radius>")
+def near(latitude, longitude, radius):
+    db = get_db()
+
+    # get list of songs
+    songs = db.find_songs({})
+    songs = [i for i in songs]
+
+    # loop through every song
+    results = []
+    for song in songs:
+
+        # loop through "total" array
+        for user in song["total"]:
+            p1 = Point("{0} {1}".format(latitude, longitude))
+            p2 = Point(
+                "{0} {1}".format(
+                    user["location"]["latitude"],
+                    user["location"]["longitude"]
+                )
+            )
+
+            # check to see if song is within radius
+            if distance.distance(p1, p2).kilometers <= float(radius):
+                # print "RADIUS:", radius
+                # print "SONG ID:", song["songId"]
+                # print "DIST:", distance.distance(p1, p2).kilometers
+                song.pop("_id")
+                results.append(song)
+                break
+
+    return jsonify({"songs": results})
