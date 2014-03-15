@@ -53,8 +53,8 @@ def song():
     latitude = request.form.get('latitude')
     longitude = request.form.get('longitude')
 
-    song = db.DB.find_song({'songId': songId})
-    song = song or db.DB.add_song({'songId': songId})
+    song = db.find_song({'songId': songId})
+    song = song or db.add_song({'songId': songId})
     now = song.setdefault('now', {})
     songObj = {'userId': userId,
                'location': {'latitude': latitude,
@@ -74,7 +74,7 @@ def desong():
     userId = request.form.get('userId')
     songId = request.form.get('songId')
 
-    song = db.DB.find_song({'songId': songId})
+    song = db.find_song({'songId': songId})
     if userId in song['now'].keys():
         del song['now'][userId]
 
