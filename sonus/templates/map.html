@@ -7,10 +7,8 @@
     </script>
 
     <script type="text/javascript">
-        // Adding 500 Data Points
         var map;
-        var pointarray;
-        var heatmap;
+        var heatmaps = [];
 
         var taxiData = [
             new google.maps.LatLng(37.782551, -122.445368),
@@ -38,148 +36,125 @@
                 mapTypeId: google.maps.MapTypeId.SATELLITE
             };
 
-            map = new google.maps.Map(document.getElementById('map-canvas'),
-                mapOptions);
+            map = new google.maps.Map(
+                document.getElementById('map-canvas'),
+                mapOptions
+            );
 
-            var pointArray = new google.maps.MVCArray(taxiData);
+            heatmap = addHeatmap(map, taxiData, 0);
+            heatmaps.push(heatmap);
 
-            heatmap = new google.maps.visualization.HeatmapLayer({
-                data: pointArray
+            heatmap = addHeatmap(map, taxiData2, 1);
+            heatmaps.push(heatmap);
+        }
+
+        function addHeatmap(map, coordinates, index) {
+            var gradient = heatmapGradient(index);
+            var points = new google.maps.MVCArray(coordinates);
+            var heatmap = new google.maps.visualization.HeatmapLayer({
+                data: points
             });
 
             heatmap.setMap(map);
+            heatmap.set('gradient', heatmap.get('gradient') ? null : gradient);
+            heatmap.set('radius', heatmap.get('radius') ? null : 40);
 
-            // take 2
-            var pointArray2 = new google.maps.MVCArray(taxiData2);
+            return heatmap;
+        }
 
-            heatmap2 = new google.maps.visualization.HeatmapLayer({
-                data: pointArray2
+        function removeHeatmap(heatmap) {
+            heatmap.setMap(null);
+        }
+
+        function heatmapGradient(index) {
+            switch(index) {
+            case 0:
+                /* RED -> YELLOW  */
+                return [
+                    'rgba(0, 255, 255, 0)',
+                    'rgb(255, 255, 0)',
+                    'rgb(255, 229, 0)',
+                    'rgb(255, 204, 0)',
+                    'rgb(255, 178, 0)',
+                    'rgb(255, 153, 0)',
+                    'rgb(255, 127, 0)',
+                    'rgb(255, 102, 0)',
+                    'rgb(255, 76, 0)',
+                    'rgb(255, 51, 0)',
+                    'rgb(255, 25, 0)',
+                    'rgb(255, 0, 0)'
+                ];
+
+            case 1:
+                /* RED -> YELLOW  */
+                /* PURPLE -> GREEN */
+                return [
+                    'rgba(0, 255, 255, 0)',
+                    'rgb(51, 255, 0)',
+                    'rgb(56, 235, 26)',
+                    'rgb(61, 214, 51)',
+                    'rgb(66, 194, 77)',
+                    'rgb(71, 173, 102)',
+                    'rgb(77, 153, 128)',
+                    'rgb(82, 133, 153)',
+                    'rgb(87, 112, 179)',
+                    'rgb(92, 92, 204)',
+                    'rgb(97, 71, 230)',
+                    'rgb(102, 51, 255)'
+                ];
+
+            case 2:
+                /* BLUE -> SKY BLUE */
+                return [
+                    'rgba(0, 255, 255, 0)',
+                    'rgb(204, 255, 255)',
+                    'rgb(184, 230, 255)',
+                    'rgb(163, 204, 255)',
+                    'rgb(143, 179, 255)',
+                    'rgb(122, 153, 255)',
+                    'rgb(102, 128, 255)',
+                    'rgb(82, 102, 255)',
+                    'rgb(61, 77, 255)',
+                    'rgb(41, 51, 255)',
+                    'rgb(20, 26, 255)',
+                    'rgb(0, 0, 255)'
+                ]
+
+            case 3:
+                /* PINK -> LIGHT PINK */
+                return [
+                    'rgba(255, 255, 255, 0)',
+                    'rgb(255, 204, 255)',
+                    'rgb(255, 184, 255)',
+                    'rgb(255, 163, 255)',
+                    'rgb(255, 143, 255)',
+                    'rgb(255, 122, 255)',
+                    'rgb(255, 102, 255)',
+                    'rgb(255, 82, 255)',
+                    'rgb(255, 61, 255)',
+                    'rgb(255, 41, 255)',
+                    'rgb(255, 20, 255)',
+                    'rgb(255, 0, 255)'
+                ];
+            }
+        }
+
+        function toggleHeatmaps() {
+            heatmaps.forEach(function(heatmap) {
+                heatmap.setMap(heatmap.getMap() ? null : map);
             });
-
-            /*
-                modify the rgba colors from hot to cold
-
-                rgba(RED, GREEN, BLUE, ALPHA);
-
-                Where alpha is the opacity of the color, 0 being transparent, 1 being 
-                opaque.
-
-                NOTE: the first line is VITAL else the whole page will be filled
-            */
-            heatmap2.setMap(map);
-
-            /* RED -> YELLOW  */
-            // var gradient = [
-            //     'rgba(0, 255, 255, 0)',
-            //     'rgb(255, 255, 0)',
-            //     'rgb(255, 229, 0)',
-            //     'rgb(255, 204, 0)',
-            //     'rgb(255, 178, 0)',
-            //     'rgb(255, 153, 0)',
-            //     'rgb(255, 127, 0)',
-            //     'rgb(255, 102, 0)',
-            //     'rgb(255, 76, 0)',
-            //     'rgb(255, 51, 0)',
-            //     'rgb(255, 25, 0)',
-            //     'rgb(255, 0, 0)'
-            // ]
-
-            /* PURPLE -> GREEN */
-            // var gradient = [
-            //     'rgba(0, 255, 255, 0)',
-            //     'rgb(51, 255, 0)',
-            //     'rgb(56, 235, 26)',
-            //     'rgb(61, 214, 51)',
-            //     'rgb(66, 194, 77)',
-            //     'rgb(71, 173, 102)',
-            //     'rgb(77, 153, 128)',
-            //     'rgb(82, 133, 153)',
-            //     'rgb(87, 112, 179)',
-            //     'rgb(92, 92, 204)',
-            //     'rgb(97, 71, 230)',
-            //     'rgb(102, 51, 255)'
-            // ]
-
-            /* BLUE -> SKY BLUE */
-            // var gradient = [
-            //     'rgba(0, 255, 255, 0)',
-            //     'rgb(204, 255, 255)',
-            //     'rgb(184, 230, 255)',
-            //     'rgb(163, 204, 255)',
-            //     'rgb(143, 179, 255)',
-            //     'rgb(122, 153, 255)',
-            //     'rgb(102, 128, 255)',
-            //     'rgb(82, 102, 255)',
-            //     'rgb(61, 77, 255)',
-            //     'rgb(41, 51, 255)',
-            //     'rgb(20, 26, 255)',
-            //     'rgb(0, 0, 255)'
-            // ]
-
-            /* BLUE -> SKY BLUE */
-            // var gradient = [
-            //     'rgba(0, 255, 255, 0)',
-            //     'rgb(204, 255, 255)',
-            //     'rgb(184, 230, 255)',
-            //     'rgb(163, 204, 255)',
-            //     'rgb(143, 179, 255)',
-            //     'rgb(122, 153, 255)',
-            //     'rgb(102, 128, 255)',
-            //     'rgb(82, 102, 255)',
-            //     'rgb(61, 77, 255)',
-            //     'rgb(41, 51, 255)',
-            //     'rgb(20, 26, 255)',
-            //     'rgb(0, 0, 255)'
-            // ]
-
-            /* PINK -> LIGHT PINK */
-            // var gradient = [
-            //     'rgba(255, 255, 255, 0)',
-            //     'rgb(255, 204, 255)',
-            //     'rgb(255, 184, 255)',
-            //     'rgb(255, 163, 255)',
-            //     'rgb(255, 143, 255)',
-            //     'rgb(255, 122, 255)',
-            //     'rgb(255, 102, 255)',
-            //     'rgb(255, 82, 255)',
-            //     'rgb(255, 61, 255)',
-            //     'rgb(255, 41, 255)',
-            //     'rgb(255, 20, 255)',
-            //     'rgb(255, 0, 255)'
-            // ]
-            heatmap2.set('gradient', heatmap2.get('gradient') ? null : gradient);
-        }
-
-        function toggleHeatmap() {
-            heatmap.setMap(heatmap.getMap() ? null : map);
-        }
-
-        function changeGradient() {
-            var gradient = [
-                'rgba(0, 255, 255, 0)',
-                'rgba(0, 255, 255, 1)',
-                'rgba(0, 191, 255, 1)',
-                'rgba(0, 127, 255, 1)',
-                'rgba(0, 63, 255, 1)',
-                'rgba(0, 0, 255, 1)',
-                'rgba(0, 0, 223, 1)',
-                'rgba(0, 0, 191, 1)',
-                'rgba(0, 0, 159, 1)',
-                'rgba(0, 0, 127, 1)',
-                'rgba(63, 0, 91, 1)',
-                'rgba(127, 0, 63, 1)',
-                'rgba(191, 0, 31, 1)',
-                'rgba(255, 0, 0, 1)'
-            ]
-            heatmap2.set('gradient', heatmap2.get('gradient') ? null : gradient);
         }
 
         function changeRadius() {
-            heatmap.set('radius', heatmap.get('radius') ? null : 20);
+            heatmaps.forEach(function(heatmap) {
+                heatmap.set('radius', heatmap.get('radius') ? null : 60);
+            });
         }
 
         function changeOpacity() {
-            heatmap.set('opacity', heatmap.get('opacity') ? null : 0.2);
+            heatmaps.forEach(function(heatmap) {
+                heatmap.set('opacity', heatmap.get('opacity') ? null : 0.2);
+            });
         }
 
         google.maps.event.addDomListener(window, 'load', initialize);
@@ -196,8 +171,7 @@
     <body>
         <!-- /container -->
         <div id="panel">
-            <button onclick="toggleHeatmap()">Toggle Heatmap</button>
-            <button onclick="changeGradient()">Change gradient</button>
+            <button onclick="toggleHeatmaps()">Toggle Heatmap</button>
             <button onclick="changeRadius()">Change radius</button>
             <button onclick="changeOpacity()">Change opacity</button>
         </div>
