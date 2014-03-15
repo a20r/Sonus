@@ -125,7 +125,6 @@ def near(latitude, longitude, radius):
     # loop through every song
     results = []
     for song in songs:
-
         # loop through "total" array
         for user in song["total"]:
             p1 = Point("{0} {1}".format(latitude, longitude))
@@ -137,10 +136,8 @@ def near(latitude, longitude, radius):
             )
 
             # check to see if song is within radius
-            if distance.distance(p1, p2).kilometers <= float(radius):
-                # print "RADIUS:", radius
-                # print "SONG ID:", song["songId"]
-                # print "DIST:", distance.distance(p1, p2).kilometers
+            dist = distance.distance(p1, p2).kilometers
+            if dist <= float(radius):
                 song.pop("_id")
                 results.append(song)
                 break
