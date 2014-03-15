@@ -1,0 +1,20 @@
+{ "songId": "1", "now": [ { "userId": "1", "location": {"latitude": 37.782551, "longitude": -122.445368} } { "userId": "2", "location": {"latitude": 37.782745, "longitude": -122.444586} } }
+{ "songId": "2", "now": [ { "userId": "3", "location": {"latitude": 37.782842, "longitude": -122.443688}, }, { "userId": "4", "location": {"latitude": 37.782919, "longitude": -122.442815} } ] }
+{ "songId": "3", "now": [ { "userId": "5", "location": {"latitude": 37.782992, "longitude": -122.442112}, }, "userId": "6", "location": {"latitude": 37.783206, "longitude": -122.440829} } ] }
+{
+    "songId": "4",
+    "now": [
+        {
+            "userId": "7",
+            "location": {"latitude": 37.753837, "longitude": -122.403172}
+        },
+        {
+            "userId": "8",
+            "location": {"latitude": 37.752986, "longitude": -122.403112}
+        },
+        {
+            "userId": "9",
+            "location": {"latitude": 37.751266, "longitude": -122.403355}
+        }
+    ]
+}

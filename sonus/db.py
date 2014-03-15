@@ -34,6 +34,7 @@ class DB(object):
         if self.find_song(song) is None:
             self.songs.insert(song)
         return song
+
     def remove_song(self, song):
         self.songs.remove(song)
 
