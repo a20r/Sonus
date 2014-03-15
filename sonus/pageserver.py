@@ -50,29 +50,29 @@ def song():
     latitude = request.form.get('latitude')
     longitude = request.form.get('longitude')
     
-    song = db.get_or_create_song(songId)
 
+    song = db.find_song({'songId':songId}) or db.add_song({'songId':songId})
+
+    
     songObj = {'userId': userId,
-               'latitude': latitude,
-                'longitude': longitude,
+               'location':{'latitude': latitude,
+                           'longitude': longitude,},
                'time': time.time()}
-    song.setdefault('now',{})[userId] = songObj
-    song.setdefault('total',{})[userId] = songObj
+               
+                
+    
+    song.setdefault('now',[]).append(songObj)
+    song.setdefault('total',[]).append(songObj)
     db.update_song(song)
-    t = Timer(200.0, remove, [songObj, songId])
+    t = Timer(200.0, remove, [userId, songId])
     t.start()
     return jsonify({'status': 'ok'})
 
 @config.app.route("/desong", methods=["POST"])
 def desong():
-    db = get_db()
     userId = request.form.get('userId')
     songId = request.form.get('songId')
-
-    song = db.get_or_create_song(songId)
-    if userId in song['now'].keys():
-        del song['now'][userId]
-    db.update_song(song)
+    remove(userId,songId)
 
 @config.app.route("/songsNearMe", methods=["GET"])
 def songsNearMe():
@@ -80,13 +80,12 @@ def songsNearMe():
     latitude = request.form.get('latitude')
     longitude = request.form.get('longitude')
     
-    song = db.get_or_create_song(songId)
-    if userId in song['now'].keys():
-        del song['now'][userId]
-    db.update_song(song)
     
-def remove(songObj,songId):
+    
+def remove(userId,songId):
     db = get_db()
-    song = db.get_or_create_song(songId)
-    if songObj['userId'] in song['now'].keys():
-        del song['now'][songObj['userId']]
+    user = db.songs.find({'songId':songId,'now.userId':userId})
+    song = db.find_song({'songId':songId})
+    song['all'].remove(user)
+    db.update_song(son)
+    

@@ -29,32 +29,26 @@ class DB(object):
     def update_song(self,song):
         
         self.songs.update( {'songId':song['songId']}, song, upsert=True)
-        
-    def get_or_create_song(self,songId):
-        song=self.find_song({'songId':songId})
-        if not song:
-            song={'songId':songId}
 
+    def add_song(self, song):
+        if self.find_song({'songId':song['songId']}) is None:
             self.songs.insert(song)
-
-        return song
-
-            
-    def add_user(self, user):
-        if self.find_user(user) is None:
-            self.users.insert(user)
 
     def remove_song(self, song):
         self.songs.remove(song)
+            
+    def find_song(self, song):
+        result = self.songs.find_one(song)
+        return result
+
+    def add_user(self, user):
+        if self.find_user(user) is None:
+            self.users.insert(user)
 
     def remove_user(self, user):
         self.users.remove(user)
 
     def find_user(self, user):
         result = self.users.find_one(user)
-        return result
-
-    def find_song(self, song):
-        result = self.songs.find_one(song)
         return result
 
