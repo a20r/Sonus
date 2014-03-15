@@ -13,6 +13,7 @@
     <!-- <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet"> -->
     <script src="js/jquery-2.1.0.js"></script>
     <script src="js/jquery.cookie.js"></script>
+
     <script src="js/jquery.smooth-scroll.js"></script>
     <script src="js/globalize.js"></script>
     <script src="js/fb.js"></script>
@@ -25,7 +26,7 @@
     <script src="js/masonry.pkgd.min.js"></script>
 </head>
 <body>
-	<div class="container">
+	<div class="container" id="mainBox">
 		<ul id="gn-menu" class="gn-menu-main">
 			<li class="gn-trigger">
 				<a class="gn-icon gn-icon-menu"><span>Menu</span></a>
@@ -38,7 +39,7 @@
 								</form>
 								<a class="gn-icon gn-icon-search"><span>Search</span></a>
 							</li>
-							<li>
+							<li id="nearMe">
 								<a class="gn-icon gn-icon-download">What's trending?</a>
 							</li>
 							<li><a class="gn-icon gn-icon-help">Help</a></li>
@@ -46,19 +47,16 @@
 					</div><!-- /gn-scroller -->
 				</nav>
 			</li>
-
+			
+			<li id='introTitle'>Sonus <span>
 			<li id="FBLOGIN"><a class="" href="#"><i class="fa fa-facebook-square"></i><span id="FBNAME"> Log In With Facebook</span></a></li>
 		</ul>
+        
 		<header id="resultsTable">
-			<center id='logo'><img  src="imgs/logo.png"></center>
-			<h1 id='intro'>Sonus <span>Find out what people are listening to around you</span></h1>	
+			<div id='logo'><img  src="imgs/logo.png"></div>
+			<h1 id='intro'>Sonus <span>Find out what people are listening to around you</span></h1>
 		</header> 
-	</div><!-- /container -->
-		<div class="chart1-container">
-            <div id="resultsTable"></div>
-			<div id="widget" style="width:100%;height: 450px;"></div>
-		</div>
-	</div>
+
     
 	<script src="js/classie.js"></script>
 	<script src="js/gnmenu.js"></script>
