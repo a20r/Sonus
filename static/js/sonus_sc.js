@@ -162,10 +162,21 @@ sonus.getLocation = function (onSuccess, onError) {
 window.onload = sonus.init;
 
     $(document).ready(function () {
+        $("#introTitle").hide();
         $("#logo").hide();
-    $("#logo").fadeIn(2000);
+    $("#logo").fadeIn(2000, function() {
+    $("#logo").fadeOut(1000);
+  });
         $("#intro").hide();
-    $("#intro").fadeIn(2000);
+      $("#intro").fadeIn(2000, function() {
+      $("#intro").fadeOut(1000, function() {
+          
+          //DO YOUR CALLBACK HERE WALLAR
+          
+          
+      $("#introTitle").fadeIn(1000);
+    });
+    });
 
     $(".item").on('click', function (event) {
                     alert(event.target.id);
