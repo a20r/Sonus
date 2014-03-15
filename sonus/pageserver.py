@@ -84,6 +84,7 @@ def remove(userId, songId):
 
 @config.app.route("/purge", methods=["GET"])
 def purge():
+    db = get_db()
     db.songs.remove()
     db.user.remove()
 
