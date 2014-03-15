@@ -31,10 +31,16 @@
                 
                 FB.api('/me?fields=id', function(response) {
                     userId=response.id;
+                    var songId='asdddf';
+                    var latitude='1234132';
+                    var longitude='12341243';
                     $.ajax({
                       type: "POST",
                       url: 'song',
-                      data: { id: userId},
+                      data: { userId: userId,
+                              songId:songId,
+                              latitude:latitude,
+                              longitude:longitude},
                     });
                     
                 });
