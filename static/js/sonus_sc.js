@@ -1,6 +1,8 @@
 
 var sonus = sonus || {};
 
+sonus.userId = null;
+
 sonus.greedyQuery = function (queryTerm) {
     SC.get('/tracks', {q: queryTerm}, function(tracks) {
         var track_url = tracks[0].permalink_url;
@@ -11,33 +13,38 @@ sonus.greedyQuery = function (queryTerm) {
 }
 
 sonus.updateWidget = function (track_url, title, genre) {
-    SC.oEmbed(track_url, {auto_play: false}, function (oEmbed) {
-        $("#widget").html(oEmbed.html);
-    });
 
-    sonus.getLocation(function (position) {
-        $.ajax({
-            url: "/songs",
-            type: "POST",
-            data: {
-                latitude: position.coords.latitude,
-                longitude: position.coords.longitude,
-                title: title,
-                genre: genre
-            }
+    if (sonus.userId != null) {
+        SC.oEmbed(track_url, {auto_play: false}, function (oEmbed) {
+            $("#widget").html(oEmbed.html);
         });
-    }, function (position) {
-        $.ajax({
-            url: "/songs",
-            type: "POST",
-            data: {
-                latitude: null,
-                longitude: null,
-                title: title,
-                genre: genre
-            }
+
+        sonus.getLocation(function (position) {
+            $.ajax({
+                url: "/songs",
+                type: "POST",
+                data: {
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude,
+                    title: title,
+                    genre: genre
+                }
+            });
+        }, function (position) {
+            $.ajax({
+                url: "/songs",
+                type: "POST",
+                data: {
+                    latitude: null,
+                    longitude: null,
+                    title: title,
+                    genre: genre
+                }
+            });
         });
-    });
+    } else {
+        alert("You are not logged in: Ammaar will make this pretty");
+    }
 
 }
 

@@ -25,25 +25,12 @@
             xfbml      : true
           });
 
-          var userId;
           FB.Event.subscribe('auth.authResponseChange', function(response) {
               if (response.status === 'connected') {
                 console.log('Logged in');
-                
                 FB.api('/me?fields=id', function(response) {
-                    userId=response.id;
-                    var songId='asdddf';
-                    var latitude='1234132';
-                    var longitude='12341243';
-                    $.ajax({
-                      type: "POST",
-                      url: 'song',
-                      data: { userId: userId,
-                              songId:songId,
-                              latitude:latitude,
-                              longitude:longitude},
-                    });
-                    
+                    var userId = response.id;
+                    sonus.userId = userId;
                 });
               } else {
                 FB.login();
