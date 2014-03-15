@@ -132,6 +132,8 @@ sonus.init = function () {
             });
         });
     });
+
+    $("#nearMe").click();
 }
 
 // Sets the locaction event handlers
