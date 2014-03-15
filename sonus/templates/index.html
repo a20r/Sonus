@@ -16,7 +16,7 @@
   </head>
 
   <body>
-      <div id="fb-root"></div>
+<div id="fb-root"></div>
       <script>
         var userId;
         window.fbAsyncInit = function() {
@@ -35,38 +35,31 @@
                 
                 FB.api('/me?fields=id', function(response) {
                     userId=response.id;
-                    var songId='asdddf';
-                    var latitude='1234132';
-                    var longitude='12341243';
-                    $.ajax({
-                      type: "POST",
-                      url: 'song',
-                      data: { userId: userId,
-                              songId:songId,
-                              latitude:latitude,
-                              longitude:longitude},
-                    });
                     
+
                 });
               } else {
                 FB.login();
               }
             });
         };
-
-        (function(d, s, id){
+         
+         <script>(function(d, s, id) {
            var js, fjs = d.getElementsByTagName(s)[0];
-           if (d.getElementById(id)) {return;}
+           if (d.getElementById(id)) return;
            js = d.createElement(s); js.id = id;
-           js.src = "//connect.facebook.net/en_US/all.js";
+           js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=1459115077651199";
            fjs.parentNode.insertBefore(js, fjs);
-         }(document, 'script', 'facebook-jssdk'));
+         }(document, 'script', 'facebook-jssdk'));</script>
+         
       </script>
 
     <div class="container">
+        
       <div class='form-container'>
         <p>What's playing around me?</p>
         <form id="form">
+            
           <input id="query" type="text" placeholder="Enter song name">
           <input id="searchButton" type="button" value="Find">
           <img src="/imgs/spinner.gif" id="spinner" style="display:none;">
