@@ -24,7 +24,6 @@
             status     : true,
             xfbml      : true
           });
-          
           FB.Event.subscribe('auth.authResponseChange', function(response) {
               if (response.status === 'connected') {
                 console.log('Logged in');
@@ -39,13 +38,7 @@
                 FB.login();
               }
             });
-        
-        
-          
-          
         };
-
-
 
         (function(d, s, id){
            var js, fjs = d.getElementsByTagName(s)[0];
@@ -55,8 +48,7 @@
            fjs.parentNode.insertBefore(js, fjs);
          }(document, 'script', 'facebook-jssdk'));
       </script>
-      
-      
+
     <div class="container">
       <div class='form-container'>
         <p>What's playing around me?</p>

@@ -26,12 +26,12 @@ def get_index():
     return render_template(
         "index.html"
     )
-    
+
 @config.app.route("/userLoggedIn", methods=["POST"])
 def userLoggedIn():
     print 'user logged in ',request.form['id']
     return jsonify({'status':'ok'})
-    
-    
-    
+
+
+
 

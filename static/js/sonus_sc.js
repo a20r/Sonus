@@ -10,10 +10,35 @@ sonus.greedyQuery = function (queryTerm) {
     });
 }
 
-sonus.updateWidget = function (track_url) {
+sonus.updateWidget = function (track_url, title, genre) {
     SC.oEmbed(track_url, {auto_play: false}, function (oEmbed) {
         $("#widget").html(oEmbed.html);
     });
+
+    sonus.getLocation(function (position) {
+        $.ajax({
+            url: "/songs",
+            type: "POST",
+            data: {
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude,
+                title: title,
+                genre: genre
+            }
+        });
+    }, function (position) {
+        $.ajax({
+            url: "/songs",
+            type: "POST",
+            data: {
+                latitude: null,
+                longitude: null,
+                title: title,
+                genre: genre
+            }
+        });
+    });
+
 }
 
 sonus.scQuery = function (queryTerm) {
@@ -21,12 +46,12 @@ sonus.scQuery = function (queryTerm) {
     SC.get('/tracks', {q: queryTerm}, function(tracks) {
         tracks.map(function (val) {
             $("#resultTable").append(
-                "<tr onclick=sonus.updateWidget(\'" +
-                val.permalink_url + "\')><td>" + val.title + "</td></tr>"
+                "<tr onclick=\'sonus.updateWidget(\"" + val.permalink_url + "\", \"" +
+                val.title + "\", \"" + val.genre + "\")\'><td>" +
+                val.title + "</td></tr>"
             );
         });
     });
-
 }
 
 sonus.init = function () {
@@ -41,7 +66,7 @@ sonus.init = function () {
 }
 
 // Sets the locaction event handlers
-sonus.getLocation = function () {
+sonus.getLocation = function (onSuccess, onError) {
     if (navigator.geolocation) {
         var timeoutVal = 6000;
 
@@ -52,22 +77,13 @@ sonus.getLocation = function () {
         };
 
         navigator.geolocation.watchPosition(
-            devicePositionHandler,
-            positionError,
+            onSuccess,
+            onError,
             extraGeoParam
         );
     } else {
         alert("Geolocation is not supported by this browser");
     }
-}
-
-sonus.positionError = function (position) {
-    console.log("error");
-}
-
-sonus.devicePositionHandler = function (position) {
-    console.log(position.coords.latitude);
-    console.log(position.coords.longitude);
 }
 
 window.onload = sonus.init;
