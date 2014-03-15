@@ -1,4 +1,5 @@
 *.py[cod]
+run.sh
 
 # C extensions
 *.so

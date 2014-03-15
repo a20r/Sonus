@@ -1,0 +1,4 @@
+flask
+pymongo
+solrpy
+scikit-learn
