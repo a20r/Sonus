@@ -44,7 +44,11 @@
 			if( !mobilecheck() ) {
 				this.trigger.addEventListener( 'mouseover', function(ev) { self._openIconMenu(); } );
 				this.trigger.addEventListener( 'mouseout', function(ev) { self._closeIconMenu(); } );
-			
+			    this.trigger.addEventListener( 'keypress', function(ev) { var key = ev.which || ev.keyCode;
+                                                                    if (key == 13) { // 13 is enter
+                                                                    alert('asdf');
+                                                                            self._closeIconMenu();
+                                                                        } } );
 				this.menu.addEventListener( 'mouseover', function(ev) {
 					self._openMenu(); 
 					document.addEventListener( self.eventtype, self.bodyClickFn ); 

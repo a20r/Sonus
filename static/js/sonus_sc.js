@@ -65,7 +65,7 @@ sonus.scQuery = function (queryTerm) {
     SC.get('/tracks', {q: queryTerm}, function(tracks) {
         tracks.map(function (val) {
             if (val.artwork_url==null){
-            val.artwork_url='/imgs/albumplaceholder.png';
+            val.artwork_url=val.user.avatar_url;
 
             }
 
@@ -74,7 +74,7 @@ sonus.scQuery = function (queryTerm) {
                 val.id+'" data-track_url="' +
                 val.permalink_url + '" data-title="' + val.title +
                 '" data-genre="' + val.genre +
-                '"><img class="album" src=' + val.artwork_url +
+                '"><img class="album" src=' + val.artwork_url.replace("large","original") +
                 '><span class="albumTitle">'+val.title+'</span> </div>'
                 
                 
