@@ -4,7 +4,7 @@ import sys
 import unittest
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
-from streamy.db import DB
+from sonus.db import DB
 
 
 class UnitTests(unittest.TestCase):
@@ -15,12 +15,35 @@ class UnitTests(unittest.TestCase):
         self.db.connect()
         self.db.disconnect()
 
-    def db_return_collection(self):
-        collections = self.db.return_collections()
+    def test_users(self):
+        self.db.connect()
 
-        self.assertTrue(collections is not None)
-        self.assertTrue(collections["tweets"] is not None)
-        self.assertTrue(collections["rss"] is not None)
+        # test add and select
+        user = {"username": "chris"}
+        self.db.add_user(user)
+        result = self.db.find_user(user)
+
+        # test remove
+        self.db.remove_user(user)
+        result_2 = self.db.find_user(user)
+
+        self.assertEquals(user, result)
+        self.assertIsNone(result_2)
+
+    def test_songs(self):
+        self.db.connect()
+
+        # test add and select
+        song = {"title": "Hello World"}
+        self.db.add_song(song)
+        result = self.db.find_song(song)
+
+        # test remove
+        self.db.remove_song(song)
+        result_2 = self.db.find_song(song)
+
+        self.assertEquals(song, result)
+        self.assertIsNone(result_2)
 
 
 if __name__ == "__main__":
