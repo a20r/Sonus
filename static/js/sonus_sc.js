@@ -27,7 +27,8 @@ sonus.updateWidget = function (track_url, title, genre) {
                     latitude: position.coords.latitude,
                     longitude: position.coords.longitude,
                     title: title,
-                    genre: genre
+                    genre: genre,
+                    userId: sonus.userId
                 }
             });
         }, function (position) {
@@ -38,7 +39,8 @@ sonus.updateWidget = function (track_url, title, genre) {
                     latitude: null,
                     longitude: null,
                     title: title,
-                    genre: genre
+                    genre: genre,
+                    userId: sonus.userId
                 }
             });
         });

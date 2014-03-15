@@ -76,6 +76,7 @@ def desong():
     if userId in song['now'].keys():
         del song['now'][userId]
     db.update_song(song)
+    
 
 
 def remove(songObj):

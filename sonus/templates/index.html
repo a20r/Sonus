@@ -16,13 +16,18 @@
   </head>
 
   <body>
-      <div id="fb-root"></div>
+<div id="fb-root"></div>
       <script>
+        var userId;
         window.fbAsyncInit = function() {
           FB.init({
             appId      : '1459115077651199',
             status     : true,
             xfbml      : true
+          });
+
+          FB.login(function(response) {
+            // Do this
           });
 
           FB.Event.subscribe('auth.authResponseChange', function(response) {
@@ -38,14 +43,13 @@
             });
         };
 
-        (function(d, s, id){
+         (function(d, s, id) {
            var js, fjs = d.getElementsByTagName(s)[0];
-           if (d.getElementById(id)) {return;}
+           if (d.getElementById(id)) return;
            js = d.createElement(s); js.id = id;
-           js.src = "//connect.facebook.net/en_US/all.js";
+           js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=1459115077651199";
            fjs.parentNode.insertBefore(js, fjs);
-         }(document, 'script', 'facebook-jssdk'));
-      </script>
+         }(document, 'script', 'facebook-jssdk'));</script>
 
     <div class="container">
       <div class='form-container'>
