@@ -25,11 +25,11 @@ class DB(object):
         if self.state == "CONNECTED":
             self.client.disconnect()
             self.state = "DISCONNECTED"
-            
+
     def update_song(self,song):
-        
+
         self.songs.update( {'songId':song['songId']}, song, upsert=True)
-        
+
     def get_or_create_song(self,songId):
         song=self.find_song({'songId':songId})
         if not song:
@@ -39,7 +39,7 @@ class DB(object):
 
         return song
 
-            
+
     def add_user(self, user):
         if self.find_user(user) is None:
             self.users.insert(user)
@@ -57,4 +57,3 @@ class DB(object):
     def find_song(self, song):
         result = self.songs.find_one(song)
         return result
-
