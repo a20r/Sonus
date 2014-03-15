@@ -5,6 +5,7 @@
     <script src="/js/jquery.cookie.js"></script>
     <script src="/js/jquery.smooth-scroll.js"></script>
     <script src="/js/globalize.js"></script>
+    <script src="/js/fb.js"></script>
     <script src="/js/dx.chartjs.js"></script>
     <script src="/js/animate.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
@@ -16,55 +17,18 @@
   </head>
 
   <body>
-<div id="fb-root"></div>
-      <script>
-        var userId;
-        window.fbAsyncInit = function() {
-          FB.init({
-            appId      : '1459115077651199',
-            status     : true,
-            xfbml      : true
-          });
-          
 
-         
-         (function(d, s, id) {
-           var js, fjs = d.getElementsByTagName(s)[0];
-           if (d.getElementById(id)) return;
-           js = d.createElement(s); js.id = id;
-           js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=1459115077651199";
-           fjs.parentNode.insertBefore(js, fjs);
-         }(document, 'script', 'facebook-jssdk'));
-         
-         FB.getLoginStatus(function(response) {
-           if (response.status === 'connected') {
-            
-           } else if (response.status === 'not_authorized') {
-               FB.login();
-           } else {
-               FB.login();
-           }
-          });
-          
-         
-         FB.Event.subscribe('auth.authResponseChange', function(response) {
-             if (response.status === 'connected') {
-               console.log('Logged in');
-               FB.api('/me?fields=id', function(response) {
-                   userId=response.id;
-               });
-             } else {
-               FB.login();
-             }
-           });
-       };
-         
-      </script>
+      <div id="fb-root"></div>
+
+
+      
 
     <div class="container">
         
       <div class='form-container'>
+          
         <p>What's playing around me?</p>
+        <div class="fb-login-button" data-max-rows="1" data-size="xlarge" data-show-faces="true" data-auto-logout-link="false"></div>
         <form id="form">
             
           <input id="query" type="text" placeholder="Enter song name">
