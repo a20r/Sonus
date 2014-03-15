@@ -14,7 +14,9 @@
 
     <script type="text/javascript">
         // Adding 500 Data Points
-        var map, pointarray, heatmap;
+        var map;
+        var pointarray;
+        var heatmap;
 
         var taxiData = [
             new google.maps.LatLng(37.782551, -122.445368),
@@ -22,6 +24,17 @@
             new google.maps.LatLng(37.782842, -122.443688),
             new google.maps.LatLng(37.782919, -122.442815),
             new google.maps.LatLng(37.782992, -122.442112)
+        ];
+
+        var taxiData2 = [
+            new google.maps.LatLng(37.757676, -122.405118),
+            new google.maps.LatLng(37.757039, -122.404346),
+            new google.maps.LatLng(37.756335, -122.403719),
+            new google.maps.LatLng(37.755503, -122.403406),
+            new google.maps.LatLng(37.754665, -122.403242),
+            new google.maps.LatLng(37.753837, -122.403172),
+            new google.maps.LatLng(37.752986, -122.403112),
+            new google.maps.LatLng(37.751266, -122.403355)
         ];
 
         function initialize() {
@@ -41,6 +54,15 @@
             });
 
             heatmap.setMap(map);
+
+            // take 2
+            var pointArray2 = new google.maps.MVCArray(taxiData2);
+
+            heatmap2 = new google.maps.visualization.HeatmapLayer({
+                data: pointArray2
+            });
+
+            heatmap2.setMap(map);
         }
 
         function toggleHeatmap() {
@@ -64,7 +86,7 @@
                 'rgba(191, 0, 31, 1)',
                 'rgba(255, 0, 0, 1)'
             ]
-            heatmap.set('gradient', heatmap.get('gradient') ? null : gradient);
+            heatmap2.set('gradient', heatmap2.get('gradient') ? null : gradient);
         }
 
         function changeRadius() {
@@ -80,6 +102,12 @@
     </head>
     <body>
         <!-- /container -->
+        <div id="panel">
+            <button onclick="toggleHeatmap()">Toggle Heatmap</button>
+            <button onclick="changeGradient()">Change gradient</button>
+            <button onclick="changeRadius()">Change radius</button>
+            <button onclick="changeOpacity()">Change opacity</button>
+        </div>
         <div id="map-canvas"></div>
     </body>
 </html>
