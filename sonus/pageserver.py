@@ -53,18 +53,15 @@ def song():
     song = db.get_or_create_song(songId)
 
     songObj = {'userId': userId,
-               'location': {'latitude': latitude,
-                            'longitude': longitude},
+               'latitude': latitude,
+                'longitude': longitude,
                'time': time.time()}
     song.setdefault('now',{})[userId] = songObj
     song.setdefault('total',{})[userId] = songObj
     db.update_song(song)
     t = Timer(200.0, remove, [songObj, songId])
     t.start()
-
-
     return jsonify({'status': 'ok'})
-
 
 @config.app.route("/desong", methods=["POST"])
 def desong():
@@ -76,10 +73,19 @@ def desong():
     if userId in song['now'].keys():
         del song['now'][userId]
     db.update_song(song)
+
+@config.app.route("/songsNearMe", methods=["GET"])
+def songsNearMe():
+    db = get_db()
+    latitude = request.form.get('latitude')
+    longitude = request.form.get('longitude')
     
-
-
-def remove(songObj):
+    song = db.get_or_create_song(songId)
+    if userId in song['now'].keys():
+        del song['now'][userId]
+    db.update_song(song)
+    
+def remove(songObj,songId):
     db = get_db()
     song = db.get_or_create_song(songId)
     if songObj['userId'] in song['now'].keys():

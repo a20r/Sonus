@@ -25,32 +25,39 @@
             status     : true,
             xfbml      : true
           });
-          FB.login(function(response) {
-            // handle the response
-          });
           
-          FB.Event.subscribe('auth.authResponseChange', function(response) {
-              if (response.status === 'connected') {
-                console.log('Logged in');
-                
-                FB.api('/me?fields=id', function(response) {
-                    userId=response.id;
-                    
 
-                });
-              } else {
-                FB.login();
-              }
-            });
-        };
          
-         <script>(function(d, s, id) {
+         (function(d, s, id) {
            var js, fjs = d.getElementsByTagName(s)[0];
            if (d.getElementById(id)) return;
            js = d.createElement(s); js.id = id;
            js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=1459115077651199";
            fjs.parentNode.insertBefore(js, fjs);
-         }(document, 'script', 'facebook-jssdk'));</script>
+         }(document, 'script', 'facebook-jssdk'));
+         
+         FB.getLoginStatus(function(response) {
+           if (response.status === 'connected') {
+            
+           } else if (response.status === 'not_authorized') {
+               FB.login();
+           } else {
+               FB.login();
+           }
+          });
+          
+         
+         FB.Event.subscribe('auth.authResponseChange', function(response) {
+             if (response.status === 'connected') {
+               console.log('Logged in');
+               FB.api('/me?fields=id', function(response) {
+                   userId=response.id;
+               });
+             } else {
+               FB.login();
+             }
+           });
+       };
          
       </script>
 
