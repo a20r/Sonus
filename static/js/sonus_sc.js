@@ -156,7 +156,9 @@ sonus.getLocation = function (onSuccess, onError) {
         alert("Geolocation is not supported by this browser");
     }
 }
-
+ function imgError(valId){
+        $("#"+valId).remove();
+    }
 window.onload = sonus.init;
 
     $(document).ready(function () {
