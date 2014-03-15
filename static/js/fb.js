@@ -6,7 +6,9 @@
           cookie     : true, // enable cookies to allow the server to access the session
           xfbml      : true  // parse XFBML
         });
-
+          $('#FBLOGIN').click(function() {
+              FB.login();
+          });
         // Here we subscribe to the auth.authResponseChange JavaScript event. This event is fired
         // for any authentication related change, such as login, logout or session refresh. This means that
         // whenever someone who was previously logged out tries to log in again, the correct case below 
@@ -59,8 +61,6 @@
             $('#FBNAME').text(' Welcome, '+response.name);
             sonus.userId = response.id;
           });
-          $('#FBLOGIN').click(function() {
-              FB.login();
-          });
+
           
         }

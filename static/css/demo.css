@@ -28,6 +28,12 @@ display: inline-block;
 position: relative; 
 }
 
+#resultsTable
+{
+top:0px;
+position:static;
+z-index:-10;
+}
 
 .albumTitle{
 position: absolute; 
