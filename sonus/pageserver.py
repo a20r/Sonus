@@ -2,14 +2,9 @@
 import config
 from flask import Response, jsonify, render_template, request, g
 import os
-<< << << < HEAD
-from db import DB
-
-== == == =
 import time
-import db
 from threading import Timer
->>>>>> > 5f4f200938d1dd9152f35d544f9ade362de2569b
+
 MIME_DICT = {
     "js": "text/javascript",
     "css": "text/css",
