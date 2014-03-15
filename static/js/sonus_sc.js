@@ -1,7 +1,7 @@
 
 var sonus = sonus || {};
 
-sonus.userId = null;
+sonus.userId = "testId";
 
 sonus.greedyQuery = function (queryTerm) {
     SC.get('/tracks', {q: queryTerm}, function(tracks) {
@@ -21,7 +21,7 @@ sonus.updateWidget = function (track_url, title, genre) {
 
         sonus.getLocation(function (position) {
             $.ajax({
-                url: "/songs",
+                url: "/song",
                 type: "POST",
                 data: {
                     latitude: position.coords.latitude,
@@ -33,7 +33,7 @@ sonus.updateWidget = function (track_url, title, genre) {
             });
         }, function (position) {
             $.ajax({
-                url: "/songs",
+                url: "/song",
                 type: "POST",
                 data: {
                     latitude: null,
@@ -51,10 +51,10 @@ sonus.updateWidget = function (track_url, title, genre) {
 }
 
 sonus.scQuery = function (queryTerm) {
-    $("#resultTable").html("");
+    $("#resultsTable").html("");
     SC.get('/tracks', {q: queryTerm}, function(tracks) {
         tracks.map(function (val) {
-            $("#resultTable").append(
+            $("#resultsTable").append(
                 "<tr onclick=\'sonus.updateWidget(\"" + val.permalink_url + "\", \"" +
                 val.title + "\", \"" + val.genre + "\")\'><td>" +
                 val.title + "</td></tr>"
@@ -68,9 +68,10 @@ sonus.init = function () {
         client_id: '0020643627fb540d480f7c4434796d2c'
     });
 
-    $("#searchButton").click(function () {
+    $("#form").on("submit", function () {
         sonus.scQuery($("#query").val());
-        console.log("here");
+        $("#query").val("");
+        return false;
     });
 }
 
@@ -85,7 +86,7 @@ sonus.getLocation = function (onSuccess, onError) {
             maximumAge: 0
         };
 
-        navigator.geolocation.watchPosition(
+        navigator.geolocation.getCurrentPosition(
             onSuccess,
             onError,
             extraGeoParam
