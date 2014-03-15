@@ -57,6 +57,20 @@ z-index:-999;
 text-align: center;
 
 }
+
+#introTitle
+{
+
+
+font-size: 300% !important;
+padding-left:15px;
+padding-right:15px;
+}
+#logoTitle
+{
+text-align:center;
+}
+
 .album{
 
 width:100%;
