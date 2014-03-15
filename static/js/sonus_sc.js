@@ -53,7 +53,7 @@ sonus.updateWidget = function (track_url, title, genre) {
 sonus.scQuery = function (queryTerm) {
      $("#logo").hide();
      $("#intro").hide();
-  
+     $('#resultsTable').css('padding-left',32);
     
     var $container = $('#resultsTable');
     $container.masonry({
@@ -63,14 +63,17 @@ sonus.scQuery = function (queryTerm) {
     
     SC.get('/tracks', {q: queryTerm}, function(tracks) {
         tracks.map(function (val) {
-            if (val.artwork_url=='null'){
+            if (val.artwork_url==null){
             val.artwork_url='/imgs/albumplaceholder.png';
+
             }
+
             $("#resultsTable").append('<div class="item image" id="'+val.id+'"><img class="album" src='+val.artwork_url+'><span class="albumTitle">'+val.title+'</span> </div>');
 			//<a>'+val.title+' '+val.genre+'</a>
             
         });
     });
+    $('#resultsTable').css('position','static');
 }
 
 sonus.init = function () {
