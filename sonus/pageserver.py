@@ -2,7 +2,9 @@
 import config
 from flask import Response, jsonify, render_template, request, g
 import os
+from db import DB
 import time
+
 from threading import Timer
 
 MIME_DICT = {
