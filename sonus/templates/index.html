@@ -8,13 +8,55 @@
     <script src="/js/dx.chartjs.js"></script>
     <script src="/js/animate.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
-    <script src="/js/gmaps.js"></script>
+    <!-- <script src="/js/gmaps.js"></script> -->
     <script src="http://connect.soundcloud.com/sdk.js"></script>
     <script src="/js/sonus_sc.js"></script>
     <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <!-- <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet"> -->
   </head>
 
   <body>
+      <div id="fb-root"></div>
+      <script>
+        window.fbAsyncInit = function() {
+          FB.init({
+            appId      : '1459115077651199',
+            status     : true,
+            xfbml      : true
+          });
+          
+          FB.Event.subscribe('auth.authResponseChange', function(response) {
+              if (response.status === 'connected') {
+                console.log('Logged in');
+                FB.api('/me?fields=id', function(response) {
+                  $.ajax({
+                    type: "POST",
+                    url: 'userLoggedIn',
+                    data: { id: response.id},
+                  });
+                });
+              } else {
+                FB.login();
+              }
+            });
+        
+        
+          
+          
+        };
+
+
+
+        (function(d, s, id){
+           var js, fjs = d.getElementsByTagName(s)[0];
+           if (d.getElementById(id)) {return;}
+           js = d.createElement(s); js.id = id;
+           js.src = "//connect.facebook.net/en_US/all.js";
+           fjs.parentNode.insertBefore(js, fjs);
+         }(document, 'script', 'facebook-jssdk'));
+      </script>
+      
+      
     <div class="container">
       <div class='form-container'>
         <p>What's playing around me?</p>
@@ -24,9 +66,10 @@
           <img src="/imgs/spinner.gif" id="spinner" style="display:none;">
         </form>
         <img src="/imgs/logo.png">
+        <table id="resultTable"></table>
       </div>
       <div class="chart1-container">
-        <div id="widget" style="width:100%;height: 450px;"></div>
+          <div id="widget" style="width:100%;height: 450px;"></div>
       </div>
     </div>
   </body>
