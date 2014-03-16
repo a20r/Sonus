@@ -77,6 +77,41 @@ html{
 	width:100%;
 	heigh:100%;
 }
+
+
+#map-canvas {
+    height: 100%;
+}
+
+.map-info {
+    padding: 0;
+    margin: 0;
+}
+
+.map-info ul {
+    list-style-type: none;
+    width: 190px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 10px;
+}
+
+.map-info ul li img {
+    width: 175px;
+}
+
+.map-info ul li.album {
+    font-weight: bold;
+}
+
+.map-info ul li.artist {
+    font-weight: bold;
+}
+
+.map-info ul li.genre {
+    font-weight: bold;
+}
+
 #geocodeQuery
 {
 left: -63px !important;

@@ -87,6 +87,9 @@ sonus.manageTracks = function (val) {
         val.artwork_url='/imgs/albumplaceholder.png';
     }
     $("#resultsTable").append(
+    
+    
+    
         '<div class="item image" id="' +
         val.id+'" data-track_url="' +
         val.permalink_url + '" data-title="' + val.title +
