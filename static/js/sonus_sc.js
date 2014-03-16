@@ -91,7 +91,7 @@ sonus.manageTracks = function (val) {
         val.id+'" data-track_url="' +
         val.permalink_url + '" data-title="' + val.title +
         '" data-genre="' + val.genre +
-        '"><img class="album" src=' + val.artwork_url.replace("large","original") +
+        '"><img class="album" onerror="imgError('+val.id+')"src=' + val.artwork_url +
         '><span class="albumTitle">'+val.title+'</span> </div>'
 
     ).hide();

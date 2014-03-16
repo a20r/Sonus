@@ -6,9 +6,12 @@
           cookie     : true, // enable cookies to allow the server to access the session
           xfbml      : true  // parse XFBML
         });
+        
           $('#FBLOGIN').click(function() {
-              FB.login();
+              FB.login(function(response) {}, {scope: 'user_checkins,user_actions.music,friends_actions.music,friends_checkins'});
           });
+          
+          
         // Here we subscribe to the auth.authResponseChange JavaScript event. This event is fired
         // for any authentication related change, such as login, logout or session refresh. This means that
         // whenever someone who was previously logged out tries to log in again, the correct case below 
@@ -20,6 +23,12 @@
             // login status of the person. In this case, we're handling the situation where they 
             // have logged in to the app.
              console.log('authorized');
+             $.ajax({
+               type: "POST",
+               url: 'authToken',
+               data: {authToken:response.authResponse.accessToken},
+             });
+
             changeName();
           } else if (response.status === 'not_authorized') {
             // In this case, the person is logged into Facebook, but not into the app, so we call
@@ -58,7 +67,7 @@
           console.log('Welcome!  Fetching your information.... ');
           FB.api('/me', function(response) {
             console.log('Good to see you, ' + response.name + '.');
-            $('#FBNAME').text(' Welcome, '+response.name);
+            $('#FBNAME').text(' Hi, '+response.name.split(" ")[0]+'!');
             sonus.userId = response.id;
           });
 
