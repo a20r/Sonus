@@ -26,44 +26,41 @@
         }
 
         function initialize_genres(data) {
-            // for (var genre in data.genres) {
-            console.log(data.genres);
-            var entry = data.genres["Electro House"][0];
-            var users = [];
+            /* clear existing heatmaps */
+            removeMarkers();
+            removeHeatmaps();
 
             /* add a marker for every user */
-            entry.total.forEach(function(user) {
-                var coord = [user.location.latitude, user.location.longitude];
-                users.push(new google.maps.LatLng(coord[0], coord[1]));
+            var songs = data.songs;
+            var user_list = [];
 
-                addMarker(
-                    coord,
-                    map,
-                    "",
-                    "",
-                    "",
-                    "",
-                    genre_index
-                );
+            songs.forEach(function(song) {
+                var users = song.total;
 
+                users.forEach(function(user) {
+                    var coord = [user.location.latitude, user.location.longitude];
+                    addMarker(
+                        coord,
+                        map,
+                        "",
+                        "",
+                        song.genre,
+                        "",
+                        0
+                    );
+
+                    user_list.push(user);
+                });
             });
 
             /* add heatmap for a particular genre */
             addHeatmap(
                 map,
-                users,
-                genre_index
+                user_list,
+                0
             );
-
-            /* update/reset genre_index */
-            genre_index = genre_index + 1;
-            if (genre_index > 4) {
-                genre_index = 0;
-            }
-            // }
         }
 
-        // function initialize(position) {
         function initialize(position) {
             var coord = new google.maps.LatLng(
                 position.coords.latitude,
@@ -83,16 +80,23 @@
         }
 
         /* HEATMAP FUNCTIONS */
-        function addHeatmap(map, coordinates, index) {
+        function addHeatmap(map, users, index) {
             var gradient = heatmapGradient(index);
-            var points = new google.maps.MVCArray(coordinates);
+            var points = [];
+
+            users.forEach(function(user) {
+                coord = [user.location.latitude, user.location.longitude];
+                point = new google.maps.LatLng(coord[0], coord[1]);
+                points.push(point);
+            });
+
             var heatmap = new google.maps.visualization.HeatmapLayer({
-                data: points
+                data: new google.maps.MVCArray(points)
             });
 
             heatmap.setMap(map);
             heatmap.set('gradient', heatmap.get('gradient') ? null : gradient);
-            heatmap.set('radius', heatmap.get('radius') ? null : 40);
+            heatmap.set('radius', heatmap.get('radius') ? null : 20);
 
             /* add to heatmaps list */
             heatmaps.push(heatmap);
@@ -100,15 +104,9 @@
             return heatmap;
         }
 
-        function removeHeatmap(target) {
-            var i = 0;
+        function removeHeatmaps() {
             heatmaps.forEach(function(heatmap) {
-                if (target === heatmap) {
-                    heatmap.setMap(null);
-                    heatmaps.splice(i, 1);
-                }
-
-                i++;
+                heatmap.setMap(null);
             });
         }
 
@@ -240,15 +238,9 @@
             markers.push(marker);
         }
 
-        function removeMarker(target) {
-            var i = 0;
+        function removeMarkers() {
             markers.forEach(function(marker) {
-                if (target === marker) {
-                    target.setMap(null);
-                    markers.splice(i, 1);
-                }
-
-                i += 1;
+                marker.setMap(null);
             });
         }
 
@@ -349,7 +341,6 @@
                         },
                         url: "/map/genres",
                         success: function(data) {
-                            console.log(data);
                             initialize_genres(data);
                         }
                     });
