@@ -189,6 +189,7 @@ def get_genre():
     results = []
     db = get_db()
     search_term = request.form.get('search_term', None)
+    print "SEARCH TERM", search_term
 
     # aggregate songs of a particular genre
     if search_term:
@@ -198,6 +199,7 @@ def get_genre():
                 {"genre": re.compile(search_term, re.IGNORECASE)},
             ]
         })
+        print songs
         for song in songs:
             song.pop("_id")  # very important, since "_id" is not serializable
             results.append(song)

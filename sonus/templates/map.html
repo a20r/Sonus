@@ -2,6 +2,7 @@
 <html>
 <head>
     <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="http://connect.soundcloud.com/sdk.js"></script>
     <script type="text/javascript"
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCTML74DBnSbEOJSnThtpcF-F188TTd3DA&sensor=false&libraries=visualization">
     </script>
@@ -34,31 +35,34 @@
             var songs = data.songs;
             var user_list = [];
 
+            console.log(data);
+
             songs.forEach(function(song) {
                 var users = song.total;
+                var songId = song["songId"];
+                SC.get("/tracks/" + songId, function (scData) {
+                    users.forEach(function(user) {
+                        var coord = [user.location.latitude, user.location.longitude];
+                        addMarker(
+                            coord,
+                            map,
+                            scData["title"],
+                            "",
+                            song.genre,
+                            scData["artwork_url"],
+                            0
+                        );
 
-                users.forEach(function(user) {
-                    var coord = [user.location.latitude, user.location.longitude];
-                    addMarker(
-                        coord,
+                        user_list.push(user);
+                    });
+                    /* add heatmap for a particular genre */
+                    addHeatmap(
                         map,
-                        "",
-                        "",
-                        song.genre,
-                        "",
+                        user_list,
                         0
                     );
-
-                    user_list.push(user);
                 });
             });
-
-            /* add heatmap for a particular genre */
-            addHeatmap(
-                map,
-                user_list,
-                0
-            );
         }
 
         function initialize(position) {
@@ -212,7 +216,7 @@
                             + "</li>"
                             + "<li class='album'>" + album + "</li>"
                             + "<li class='artist'>" + artist + "</li>"
-                            + "<li class='genre'>" + genre + "</li>"
+                            + "<li class='genre'>[" + genre + "]</li>"
                         + "</ul>"
                     + "</div>"
             });
@@ -298,14 +302,14 @@
 
         .map-info ul {
             list-style-type: none;
-            width: 250px;
+            width: 190px;
             margin-left: auto;
             margin-right: auto;
             padding-left: 10px;
         }
 
         .map-info ul li img {
-            width: 250px;
+            width: 175px;
         }
 
         .map-info ul li.album {
@@ -323,17 +327,21 @@
 
     </head>
     <body>
-        <form id="search_form">
+        <form id="search_form" method="POST">
             <input type="text" id="search" name="search" autofocus>
             <input type="submit" value="Go">
         </form>
         <script>
             $(document).ready(function() {
+                SC.initialize({
+                    client_id: '0020643627fb540d480f7c4434796d2c'
+                });
                 if (!("autofocus" in document.createElement("input"))) {
                     $("#search").focus();
                 }
-
                 $("#search_form").on("submit", function(event) {
+
+                    console.log($("#search").val());
                     $.ajax({
                         type: "POST",
                         data: {
