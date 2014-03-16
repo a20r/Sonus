@@ -136,25 +136,32 @@ def near(latitude, longitude, radius):
     songs = db.find_songs({})
     songs = [i for i in songs]
 
+    print "LOCATION:", latitude, longitude
+
     # loop through every song
     results = []
     for song in songs:
         # loop through "total" array
         for user in song["total"]:
-
-            p1 = Point("{0},{1}".format(latitude, longitude))
-            p2 = Point(
-                "{0},{1}".format(
-                    user["location"]["latitude"],
-                    user["location"]["longitude"]
-                )
+            x = str(latitude) + "," + str(longitude)
+            y = (
+                str(user["location"]["latitude"])
+                + ","
+                + str(user["location"]["longitude"])
             )
 
-            # check to see if song is within radius
-            dist = distance.distance(p1, p2).kilometers
-            if dist <= float(radius):
-                song.pop("_id")
-                results.append(song)
-                break
+            print "X", x
+            print "Y", y
+
+            if len(x) > 1 and len(y) > 1:  # 1 because of comma
+                p1 = Point(x)
+                p2 = Point(y)
+
+                # check to see if song is within radius
+                dist = distance.distance(p1, p2).kilometers
+                if dist <= float(radius):
+                    song.pop("_id")
+                    results.append(song)
+                    break
 
     return jsonify({"songs": results})
