@@ -9,7 +9,7 @@ if __name__ == "__main__":
     elif len(sys.argv) == 1:
         ip_addr = socket.gethostbyname(socket.getfqdn())
         ip_addr='sonus.mobi'
-        sonus.run(ip_addr, 80)
+        sonus.run('localhost', 8000)
     else:
         raise Exception("Correct argument form not supplied")
 
