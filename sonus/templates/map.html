@@ -12,6 +12,8 @@
         var curr_info_window = null;
         var heatmaps = [];
         var markers = [];
+        var genre_index = 0;
+
 
         function error(msg) {
             console.log(msg);
@@ -20,6 +22,43 @@
         function getLocation() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(initialize, error);
+            }
+        }
+
+        function initialize_genres(data) {
+            for (var genre in data.genres) {
+                var entry = data.genres[genre][0];
+                var users = [];
+
+                /* add a marker for every user */
+                entry.total.forEach(function(user) {
+                    var coord = [user.location.latitude, user.location.longitude];
+                    users.push(new google.maps.LatLng(coord[0], coord[1]));
+
+                    addMarker(
+                        coord,
+                        map,
+                        "",
+                        "",
+                        genre,
+                        "",
+                        genre_index
+                    );
+
+                });
+
+                /* add heatmap for a particular genre */
+                addHeatmap(
+                    map,
+                    users,
+                    genre_index
+                );
+
+                /* update/reset genre_index */
+                genre_index = genre_index + 1;
+                if (genre_index > 4) {
+                    genre_index = 0;
+                }
             }
         }
 
@@ -43,9 +82,10 @@
             $.ajax({
                 type: "GET",
                 contentType: "application/json; charset=utf-8",
-                url: "/maps/genres",
+                url: "/map/genres",
                 success: function(data) {
                     console.log(data);
+                    initialize_genres(data);
                 },
                 dataType: "json"
             });
@@ -63,6 +103,9 @@
             heatmap.setMap(map);
             heatmap.set('gradient', heatmap.get('gradient') ? null : gradient);
             heatmap.set('radius', heatmap.get('radius') ? null : 40);
+
+            /* add to heatmaps list */
+            heatmaps.push(heatmap);
 
             return heatmap;
         }

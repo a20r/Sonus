@@ -61,26 +61,29 @@ def song():
     latitude = request.form.get('latitude')
     longitude = request.form.get('longitude')
     song = db.find_song({'songId': songId}) or db.add_song({'songId': songId})
-    user = {
-        'userId': userId,
-        'location': {
-            'latitude': latitude,
-            'longitude': longitude
-        },
-        'time': time.time()
-    }
 
-    # create song dict
-    song = {"songId": songId, "genre": genre}
-    song.setdefault('now', []).append(user)
-    song.setdefault('total', []).append(user)
+    # make sure user has location data else pointless adding him
+    if len(latitude) > 0 and len(longitude) > 0:
+        user = {
+            'userId': userId,
+            'location': {
+                'latitude': latitude,
+                'longitude': longitude
+            },
+            'time': time.time()
+        }
 
-    # update song details (i.e. "now" and "total" fields)
-    db.update_song({"songId": songId}, song)
+        # create song dict
+        song = {"songId": songId, "genre": genre}
+        song.setdefault('now', []).append(user)
+        song.setdefault('total', []).append(user)
 
-    # remove user from now after certain time
-    t = threading.Timer(1000.0, remove_user_from_now, [userId, songId])
-    t.start()
+        # update song details (i.e. "now" and "total" fields)
+        db.update_song({"songId": songId}, song)
+
+        # remove user from now after certain time
+        t = threading.Timer(1000.0, remove_user_from_now, [userId, songId])
+        t.start()
 
     return jsonify({'status': 'ok'})
 
@@ -158,7 +161,7 @@ def near(latitude, longitude, radius):
     results = []
     for song in songs:
         # loop through "total" array
-        for user in song["total"]:
+        for user in song.get("total", []):
             x = str(latitude) + "," + str(longitude)
             y = (
                 str(user["location"]["latitude"])
@@ -180,16 +183,18 @@ def near(latitude, longitude, radius):
     return jsonify({"songs": results})
 
 
-@config.app.route("/map/<genre>")
-def get_genre(genre):
+@config.app.route("/map/genres")
+def get_genre():
     results = {}
     db = get_db()
 
     # aggregate songs of a particular genre
     songs = db.find_songs({})
     for song in songs:
-        if song["genre"] and song["genre"] not in results:
-            results[song["genre"]] = []
-            results[song["genre"]].append(song)
+        genre = song.get("genre", False)
+        if genre and genre not in results:
+            results[genre] = []
+            song.pop("_id")  # very important, since it is not serializable
+            results[genre].append(song)
 
     return jsonify({"genres": results})
