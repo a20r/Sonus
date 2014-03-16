@@ -31,11 +31,6 @@
             // login status of the person. In this case, we're handling the situation where they 
             // have logged in to the app.
              console.log('authorized');
-              $.ajax({
-                type: "POST",
-                url: 'authToken',
-                data: {authToken:response.authResponse.accessToken},
-              });
 
             changeName();
           } else if (response.status === 'not_authorized') {
