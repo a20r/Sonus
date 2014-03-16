@@ -26,40 +26,41 @@
         }
 
         function initialize_genres(data) {
-            for (var genre in data.genres) {
-                var entry = data.genres[genre][0];
-                var users = [];
+            // for (var genre in data.genres) {
+            console.log(data.genres);
+            var entry = data.genres["Electro House"][0];
+            var users = [];
 
-                /* add a marker for every user */
-                entry.total.forEach(function(user) {
-                    var coord = [user.location.latitude, user.location.longitude];
-                    users.push(new google.maps.LatLng(coord[0], coord[1]));
+            /* add a marker for every user */
+            entry.total.forEach(function(user) {
+                var coord = [user.location.latitude, user.location.longitude];
+                users.push(new google.maps.LatLng(coord[0], coord[1]));
 
-                    addMarker(
-                        coord,
-                        map,
-                        "",
-                        "",
-                        genre,
-                        "",
-                        genre_index
-                    );
-
-                });
-
-                /* add heatmap for a particular genre */
-                addHeatmap(
+                addMarker(
+                    coord,
                     map,
-                    users,
+                    "",
+                    "",
+                    "",
+                    "",
                     genre_index
                 );
 
-                /* update/reset genre_index */
-                genre_index = genre_index + 1;
-                if (genre_index > 4) {
-                    genre_index = 0;
-                }
+            });
+
+            /* add heatmap for a particular genre */
+            addHeatmap(
+                map,
+                users,
+                genre_index
+            );
+
+            /* update/reset genre_index */
+            genre_index = genre_index + 1;
+            if (genre_index > 4) {
+                genre_index = 0;
             }
+            // }
         }
 
         // function initialize(position) {
@@ -78,17 +79,6 @@
                 document.getElementById('map-canvas'),
                 mapOptions
             );
-
-            $.ajax({
-                type: "GET",
-                contentType: "application/json; charset=utf-8",
-                url: "/map/genres",
-                success: function(data) {
-                    console.log(data);
-                    initialize_genres(data);
-                },
-                dataType: "json"
-            });
 
         }
 
@@ -341,7 +331,28 @@
 
     </head>
     <body>
-        <!-- /container -->
+        <form id="search_form" method="POST">
+            <input type="text" name="search" autofocus>
+            <input type="submit" value="Go">
+        </form>
+        <script>
+            $(document).ready(function() {
+                if (!("autofocus" in document.createElement("input"))) {
+                    $("#search").focus();
+                }
+
+            $("#search_form").submit(function(event) {
+                type: "GET",
+                contentType: "application/json; charset=utf-8",
+                url: "/map/genres",
+                success: function(data) {
+                    console.log(data);
+                    initialize_genres(data);
+                },
+                dataType: "json"
+            });
+        </script>
+
         <div id="panel">
             <button onclick="toggleHeatmaps()">Toggle Heatmap</button>
             <button onclick="changeRadius()">Change radius</button>
