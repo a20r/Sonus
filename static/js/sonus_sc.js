@@ -214,7 +214,7 @@ $(document).ready(function () {
         $("#intro").fadeOut(1000, function() {
             $("#introTitle").fadeIn(1000);
 
-            $("#nearMe").click(); 
+            
         });
     });
 
