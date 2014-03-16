@@ -1,3 +1,4 @@
+$( document ).ready(function() {
 
         window.fbAsyncInit = function() {
         FB.init({
@@ -76,3 +77,5 @@
 
           
         }
+
+});
