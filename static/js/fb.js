@@ -1,3 +1,4 @@
+$( document ).ready(function() {
 
         window.fbAsyncInit = function() {
         FB.init({
@@ -7,7 +8,7 @@
           xfbml      : true  // parse XFBML
         });
         
-          $('#FBLOGIN').bind('click',function() {
+          $('#FBLOGIN').on('click',function() {
               FB.login(function(response) {
               
               $.ajax({
@@ -76,3 +77,5 @@
 
           
         }
+
+});
