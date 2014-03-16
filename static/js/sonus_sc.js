@@ -150,6 +150,9 @@ sonus.init = function () {
     });
 
     $("#nearMe").click(function () {
+        $('#map-canvas').hide(); 
+        $('#resultsTable').show();
+        
         sonus.getLocation(function (position) {
             sonus.locationUpdateUI(
                 position.coords.latitude,
