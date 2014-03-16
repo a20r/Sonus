@@ -86,8 +86,7 @@ html{
 	bottom:-400px;
 	width: 100%;
 	color: #FFFFFF !important;
-	background-color: rgb(0, 0, 0);
-	background-color: rgba(0, 0, 0, 0.6);
+background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0)), to(rgba(0, 0, 0, 1)));
 }
 
 .form-container

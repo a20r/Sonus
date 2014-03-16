@@ -6,8 +6,9 @@ import json
 from geopy import distance
 from geopy import Point
 from db import DB
-
+import facebook
 import time
+import urllib2
 
 from threading import Timer
 
@@ -113,6 +114,19 @@ def purge():
     db.users.remove()
     return jsonify({'status': 'ok'})
 
+@config.app.route("/authToken", methods=["POST"])
+def authToken():
+
+    authToken= request.form.get('authToken')
+    musicListens="https://graph.facebook.com/me.fields=music.listens?access_token="+authToken
+    #checkins="https://graph.facebook.com/me?fields=checkins.fields(coordinates,created_time)?access_token="+authToken
+    #friendsListens="https://graph.facebook.com/me?fields=friends.limit(100).fields(music.listens.fields(data))?access_token="+authToken
+    #friendsCheckins="https://graph.facebook.com/me?fields=friends.limit(100).fields(checkins.fields(coordinates,created_time))?access_token="+authToken
+    print urllib2.urlopen(musicListens).read()
+    #print urllib2.urlopen(checkins).read()
+    #print urllib2.urlopen(friendsListens).read()
+    #print urllib2.urlopen(friendsCheckins).read()
+    return jsonify({'status': 'ok'})
 
 @config.app.route("/near/<latitude>/<longitude>/<radius>")
 def near(latitude, longitude, radius):
@@ -127,9 +141,10 @@ def near(latitude, longitude, radius):
     for song in songs:
         # loop through "total" array
         for user in song["total"]:
-            p1 = Point("{0} {1}".format(latitude, longitude))
+
+            p1 = Point("{0},{1}".format(latitude, longitude))
             p2 = Point(
-                "{0} {1}".format(
+                "{0},{1}".format(
                     user["location"]["latitude"],
                     user["location"]["longitude"]
                 )
