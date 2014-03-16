@@ -18,6 +18,12 @@ sonus.updateWidget = function (track_url, title, genre, valId) {
     if (sonus.userId != null) {
         SC.oEmbed(track_url, {auto_play: true}, function (oEmbed) {
             $("#" + valId).html(oEmbed.html);
+            var valDiv = document.getElementById(valId);
+            var frame = valDiv.getElementsByTagName("iframe")[0];
+            var widget = SC.Widget(frame);
+            widget.bind(SC.Widget.Events.FINISH, function () {
+                $("#" + valId).next().click();
+            });
         });
 
         sonus.getLocation(function (position) {
@@ -196,7 +202,7 @@ $(document).ready(function () {
         $("#intro").fadeOut(1000, function() {
             $("#introTitle").fadeIn(1000);
 
-            // $("#nearMe").click();
+            $("#nearMe").click();
         });
     });
 
