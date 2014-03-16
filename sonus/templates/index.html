@@ -10,8 +10,6 @@
 	<link rel="stylesheet" type="text/css" href="css/demo.css" />
 	<link rel="stylesheet" type="text/css" href="css/component.css" />
 	<link rel="stylesheet" href="css/font-awesome.min.css">
-    <link type="text/css" rel="stylesheet" href="css/trip.min.css">
-
     <!-- <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet"> -->
     <script src="js/jquery-2.1.0.js"></script>
     <script src="js/jquery.cookie.js"></script>
@@ -27,7 +25,6 @@
 	<script src="js/sonus_sc.js"></script>
 	<script src="js/modernizr.custom.js"></script>
     <script src="js/masonry.pkgd.min.js"></script>
-    <script type="text/javascript" src="js/trip.min.js"></script>
 </head>
 <body>
 	<div class="container" id="mainBox">
@@ -39,18 +36,19 @@
 						<ul class="gn-menu">
 							<li class="gn-search-item">
 								<form id="form">
+                                    <a class="gn-icon gn-icon-search"></a>
 									<input id="query" placeholder="Enter song or artist name" type="text" class="gn-search" >
 								</form>
-                                <a class="gn-icon gn-icon-search"><span>Search music</span></a>
 							</li>
                             <li class="gn-search-item">
 								<form id="geoForm">
-									<input id="geocodeQuery" placeholder="Enter location" type="text" class="gn-search" >
+                                    <a class="gn-icon gn-icon-earth"></a>
+									<input id="geocodeQuery" placeholder="Enter place" type="text" class="gn-search" >
+                                    
 								</form>
-                                <a class="gn-icon gn-icon-earth"><span>Search music</span></a>
 							</li>
 							<li id="nearMe">
-								<a class="gn-icon gn-icon-download">Songs being played near you</a>
+								<a class="gn-icon gn-icon-download">What's trending?</a>
 							</li>
 							<li><a class="gn-icon gn-icon-help">Help</a></li>
 						</ul>
