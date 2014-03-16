@@ -7,7 +7,7 @@ sonus.geocoder = null;
 sonus.greedyQuery = function (queryTerm) {
     SC.get('/tracks', {q: queryTerm}, function(tracks) {
         var track_url = tracks[0].permalink_url;
-        SC.oEmbed(track_url, {auto_play: false}, function(oEmbed) {
+        SC.oEmbed(track_url, {auto_play: true}, function(oEmbed) {
             $("#widget").html(oEmbed.html);
         });
     });
@@ -70,7 +70,7 @@ sonus.scQuery = function (queryTerm) {
     SC.get('/tracks', {q: queryTerm}, function(tracks) {
         tracks.map(sonus.manageTracks);
     });
-    $('#resultsTable').click()
+    $('#menuButton').click()
     $('#resultsTable').css('position','static');
 }
 
@@ -120,7 +120,7 @@ sonus.locationUpdateUI = function(lat, lng) {
                     sonus.manageTracks(scJson);
                 });
             });
-            $('#resultsTable').click()
+            $('#menuButton').click()
             $('#resultsTable').css('position','static');
     });
 }
@@ -139,6 +139,7 @@ sonus.init = function () {
 
     $("#geoForm").on("submit", function () {
         sonus.geocodeUpdateUI($("#geocodeQuery").val());
+        $("#geocodeQuery").val("");
         return false;
     });
 
