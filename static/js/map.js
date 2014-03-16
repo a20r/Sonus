@@ -2,7 +2,7 @@
 
                 var map;
                 var curr_info_window = null;
-                var map_bounds = new google.maps.LatLngBounds();
+                var map_bounds = new google.maps.LatLngBounds(null);
                 var heatmaps = [];
                 var markers = [];
                 var genre_index = 0;
@@ -54,9 +54,17 @@
                                 0
                             );
 
+                            map.initialZoom = true;
                             map.fitBounds(map_bounds);
+                            var listener = google.maps.event.addListener(map, "idle", function() {
+                                if (map.getZoom() > 18) map.setZoom(18);
+                                    google.maps.event.removeListener(listener);
+                            });
+
                         });
                     });
+
+
                 }
 
                 function initialize(position) {
@@ -74,24 +82,6 @@
                         document.getElementById('map-canvas'),
                         mapOptions
                     );
-
-                    // CHANGE ZOOM IF NECESSARY AFTER BOUNDS HAVE CHANGED
-                    zoomChangeBoundsListener = google.maps.event.addListenerOnce(
-                        map,
-                        'bounds_changed',
-                        function(event) {
-                            if (map.getZoom() > 12) {
-                                map.setZoom(12);
-                            }
-                        }
-                    );
-                    setTimeout(
-                        function(){
-                            google.maps.event.removeListener(zoomChangeBoundsListener)
-                        }
-                        ,2000
-                    );
-
                 }
 
                 /* HEATMAP FUNCTIONS */
@@ -257,7 +247,6 @@
                 function removeMarkers() {
                     markers.forEach(function(marker) {
                         marker.setMap(null);
-                        map_bounds.pop();
                     });
 
                 }
@@ -289,7 +278,7 @@
                 }
 
                getLocation();
-$('#map-canvas').hide();
+                $('#map-canvas').hide();
                    SC.initialize({
                        client_id: '0020643627fb540d480f7c4434796d2c'
                    });
