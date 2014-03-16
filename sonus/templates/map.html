@@ -331,8 +331,8 @@
 
     </head>
     <body>
-        <form id="search_form" method="POST">
-            <input type="text" name="search" autofocus>
+        <form id="search_form">
+            <input type="text" id="search" name="search" autofocus>
             <input type="submit" value="Go">
         </form>
         <script>
@@ -341,15 +341,20 @@
                     $("#search").focus();
                 }
 
-            $("#search_form").submit(function(event) {
-                type: "GET",
-                contentType: "application/json; charset=utf-8",
-                url: "/map/genres",
-                success: function(data) {
-                    console.log(data);
-                    initialize_genres(data);
-                },
-                dataType: "json"
+                $("#search_form").on("submit", function(event) {
+                    $.ajax({
+                        type: "POST",
+                        data: {
+                            search_term: $("#search").val()
+                        },
+                        url: "/map/genres",
+                        success: function(data) {
+                            console.log(data);
+                            initialize_genres(data);
+                        }
+                    });
+                    return false;
+                });
             });
         </script>
 

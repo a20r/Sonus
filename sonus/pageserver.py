@@ -7,6 +7,7 @@ from geopy import distance
 from geopy import Point
 from db import DB
 import threading
+import re
 
     #continue doing stuff
 import time
