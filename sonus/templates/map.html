@@ -331,7 +331,7 @@
 
     </head>
     <body>
-        <form id="search_form" method="POST">
+        <form id="search_form">
             <input type="text" name="search" autofocus>
             <input type="submit" value="Go">
         </form>
@@ -342,8 +342,7 @@
                 }
 
             $("#search_form").submit(function(event) {
-                type: "GET",
-                contentType: "application/json; charset=utf-8",
+                type: "POST",
                 url: "/map/genres",
                 success: function(data) {
                     console.log(data);
