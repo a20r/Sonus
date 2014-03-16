@@ -7,7 +7,7 @@ sonus.geocoder = null;
 sonus.greedyQuery = function (queryTerm) {
     SC.get('/tracks', {q: queryTerm}, function(tracks) {
         var track_url = tracks[0].permalink_url;
-        SC.oEmbed(track_url, {auto_play: true}, function(oEmbed) {
+        SC.oEmbed(track_url, {auto_play: false}, function(oEmbed) {
             $("#widget").html(oEmbed.html);
         });
     });
@@ -18,12 +18,6 @@ sonus.updateWidget = function (track_url, title, genre, valId) {
     if (sonus.userId != null) {
         SC.oEmbed(track_url, {auto_play: true}, function (oEmbed) {
             $("#" + valId).html(oEmbed.html);
-            var valDiv = document.getElementById(valId);
-            var frame = valDiv.getElementsByTagName("iframe")[0];
-            var widget = SC.Widget(frame);
-            widget.bind(SC.Widget.Events.FINISH, function () {
-                $("#" + valId).next().click();
-            });
         });
 
         sonus.getLocation(function (position) {
@@ -52,7 +46,7 @@ sonus.updateWidget = function (track_url, title, genre, valId) {
             });
         });
     } else {
-        FB.login();
+        alert("You are not logged in: Ammaar will make this pretty");
     }
 
 }
@@ -132,20 +126,13 @@ sonus.init = function () {
     });
 
     $("#form").on("submit", function () {
-        $('#map-canvas').hide(); 
-        $('#resultsTable').show(); 
-        
         sonus.scQuery($("#query").val());
         $("#query").val("");
         return false;
     });
 
     $("#geoForm").on("submit", function () {
-        $('#map-canvas').hide(); 
-        $('#resultsTable').show(); 
-        
         sonus.geocodeUpdateUI($("#geocodeQuery").val());
-        $("#geocodeQuery").val("");
         return false;
     });
 
@@ -159,7 +146,6 @@ sonus.init = function () {
     });
 
     sonus.geocoder = new google.maps.Geocoder();
-
 }
 
 sonus.geocodeUpdateUI = function (addr) {
@@ -199,24 +185,37 @@ function imgError(valId){
 }
 window.onload = sonus.init;
 
-$(document).ready(function () {
+<<<<<<< HEAD
+    $(document).ready(function () {
+        $("#introTitle").hide();
+        $("#logo").hide();
+    $("#logo").fadeIn(1000, function() {
+    $("#logo").fadeOut(1000);
+  });
+        $("#intro").hide();
+      $("#intro").fadeIn(1000, function() {
+      $("#intro").fadeOut(1000, function() {
+      $("#introTitle").fadeIn(1000);
 
+      $("#nearMe").click();
+=======
+$(document).ready(function () {
     $("#introTitle").hide();
     $("#logo").hide();
     $("#logo").fadeIn(2000, function() {
         $("#logo").fadeOut(1000);
+>>>>>>> 116c6bdfff0f542c250d565076f64b74f70fd4c8
     });
     $("#intro").hide();
     $("#intro").fadeIn(2000, function() {
         $("#intro").fadeOut(1000, function() {
             $("#introTitle").fadeIn(1000);
 
-            $("#nearMe").click(); 
+            // $("#nearMe").click();
         });
     });
 
     $(".item").on('click', function (event) {
         alert(event.target.id);
     });
-
 });

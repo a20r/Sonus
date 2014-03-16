@@ -16,6 +16,16 @@
 
 /* Icomoon.com */
 
+
+#mapquery {
+left: -63px !important;
+display: inline !important;
+}
+
+.gn-icon-pictures {
+display: inline !important;
+}
+
 .gn-menu-main,
 .gn-menu-main ul {
 z-index:100;
@@ -205,7 +215,7 @@ input.gn-search:focus {
 		color: white
 }
 
-.gn-menu-main a.gn-icon-search {
+.gn-menu-main a.gn-icon-search  {
 		position: absolute;
 		top: 0;
 		left: 0;
