@@ -6,7 +6,7 @@ import json
 from geopy import distance
 from geopy import Point
 from db import DB
-import facebook
+
 import time
 import urllib2
 
