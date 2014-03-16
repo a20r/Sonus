@@ -1,7 +1,8 @@
             $(document).ready(function() {
-               
+
                 var map;
                 var curr_info_window = null;
+                var map_bounds = new google.maps.LatLngBounds();
                 var heatmaps = [];
                 var markers = [];
                 var genre_index = 0;
@@ -52,6 +53,8 @@
                                 user_list,
                                 0
                             );
+
+                            map.fitBounds(map_bounds);
                         });
                     });
                 }
@@ -70,6 +73,23 @@
                     map = new google.maps.Map(
                         document.getElementById('map-canvas'),
                         mapOptions
+                    );
+
+                    // CHANGE ZOOM IF NECESSARY AFTER BOUNDS HAVE CHANGED
+                    zoomChangeBoundsListener = google.maps.event.addListenerOnce(
+                        map,
+                        'bounds_changed',
+                        function(event) {
+                            if (map.getZoom() > 12) {
+                                map.setZoom(12);
+                            }
+                        }
+                    );
+                    setTimeout(
+                        function(){
+                            google.maps.event.removeListener(zoomChangeBoundsListener)
+                        }
+                        ,2000
                     );
 
                 }
@@ -205,9 +225,9 @@
                                     + "<li class='map-icon'>"
                                         + "<img src='" + image + "'></img>"
                                     + "</li>"
-                                    + "<li class='album'>" + album + "</li>"
-                                    + "<li class='artist'>" + artist + "</li>"
-                                    + "<li class='genre'>[" + genre + "]</li>"
+                                    + "<li class='map-album'>" + album + "</li>"
+                                    + "<li class='map-artist'>" + artist + "</li>"
+                                    + "<li class='map-genre'>[" + genre + "]</li>"
                                 + "</ul>"
                             + "</div>"
                     });
@@ -231,12 +251,15 @@
 
                     /* add to markers list */
                     markers.push(marker);
+                    map_bounds.extend(new google.maps.LatLng(coord[0], coord[1]));
                 }
 
                 function removeMarkers() {
                     markers.forEach(function(marker) {
                         marker.setMap(null);
+                        map_bounds.pop();
                     });
+
                 }
 
                 function toggleMarkers() {
@@ -274,11 +297,11 @@ $('#map-canvas').hide();
                        $("#search").focus();
                    }
                    $("#mapform").on("submit", function(event) {
-                    $('#resultsTable').hide(); 
-                    $('#map-canvas').show(); 
+                    $('#resultsTable').hide();
+                    $('#map-canvas').show();
                     google.maps.event.trigger(map, "resize");
-                    
-                    
+
+
                        console.log($("#mapquery").val());
                        $.ajax({
                            type: "POST",
@@ -294,9 +317,9 @@ $('#map-canvas').hide();
                        return false;
 
                });
-                
-                
-                
-                
-                
+
+
+
+
+
             });
