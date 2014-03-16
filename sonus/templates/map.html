@@ -9,32 +9,29 @@
     <script type="text/javascript">
         /* GLOBAL VARS */
         var map;
+        var curr_info_window = null;
         var heatmaps = [];
         var markers = [];
 
-        var taxiData = [
-            new google.maps.LatLng(37.782551, -122.445368),
-            new google.maps.LatLng(37.782745, -122.444586),
-            new google.maps.LatLng(37.782842, -122.443688),
-            new google.maps.LatLng(37.782919, -122.442815),
-            new google.maps.LatLng(37.782992, -122.442112)
-        ];
+        function error(msg) {
+            console.log(msg);
+        }
 
-        var taxiData2 = [
-            new google.maps.LatLng(37.757676, -122.405118),
-            new google.maps.LatLng(37.757039, -122.404346),
-            new google.maps.LatLng(37.756335, -122.403719),
-            new google.maps.LatLng(37.755503, -122.403406),
-            new google.maps.LatLng(37.754665, -122.403242),
-            new google.maps.LatLng(37.753837, -122.403172),
-            new google.maps.LatLng(37.752986, -122.403112),
-            new google.maps.LatLng(37.751266, -122.403355)
-        ];
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(initialize, error);
+            }
+        }
 
-        function initialize() {
+        // function initialize(position) {
+        function initialize(position) {
+            var coord = new google.maps.LatLng(
+                position.coords.latitude,
+                position.coords.longitude
+            );
             var mapOptions = {
                 zoom: 13,
-                center: new google.maps.LatLng(37.774546, -122.433523),
+                center: coord,
                 mapTypeId: google.maps.MapTypeId.SATELLITE
             };
 
@@ -43,19 +40,16 @@
                 mapOptions
             );
 
-            heatmap = addHeatmap(map, taxiData, 0);
-            heatmaps.push(heatmap);
+            $.ajax({
+                type: "GET",
+                contentType: "application/json; charset=utf-8",
+                url: "/maps/genres",
+                success: function(data) {
+                    console.log(data);
+                },
+                dataType: "json"
+            });
 
-            heatmap = addHeatmap(map, taxiData2, 1);
-            heatmaps.push(heatmap);
-
-            var pic = "http://i0.kym-cdn.com/photos/images/newsfeed/000/173/576/Wat8.jpg?1315930535";
-
-            var coord = [37.782551, -122.445368];
-            addMarker(coord, map, "", "", pic, 2);
-
-            var coord = [37.751266, -122.403355];
-            addMarker(coord, map, "", "", pic, 4);
         }
 
         /* HEATMAP FUNCTIONS */
@@ -176,18 +170,24 @@
         }
 
 
-
         /* MARKER FUNCTIONS */
-        function addMarker(coord, map, album, genre, image, index) {
+        function addMarker(coord, map, album, artist, genre, image, index) {
             var info_window = new google.maps.InfoWindow({
                 content:
-                    "<img class='map-icon' src='"
-                    + image
-                    +  "' alt='image in infowindow'>"
+                    "<div class='map-info'>"
+                        + "<ul>"
+                            + "<li class='map-icon'>"
+                                + "<img src='" + image + "'></img>"
+                            + "</li>"
+                            + "<li class='album'>" + album + "</li>"
+                            + "<li class='artist'>" + artist + "</li>"
+                            + "<li class='genre'>" + genre + "</li>"
+                        + "</ul>"
+                    + "</div>"
             });
 
             var marker = new google.maps.Marker({
-                position: new google.maps.LatLng(coord[0], coord[0]),
+                position: new google.maps.LatLng(coord[0], coord[1]),
                 map: map,
                 title: album,
                 icon: markerColor(index)
@@ -195,11 +195,12 @@
 
             /* click listener */
             google.maps.event.addListener(marker, 'click', function() {
-                /* open info window */
-                info_window.open(map, marker);
+                if (curr_info_window != null) {
+                    curr_info_window.close();
+                }
 
-                /* close after 5 seconds */
-                setTimeout(function() { info_window.close() }, 5000);
+                info_window.open(map, marker);
+                curr_info_window = info_window;
             });
 
             /* add to markers list */
@@ -208,7 +209,6 @@
 
         function removeMarker(target) {
             var i = 0;
-
             markers.forEach(function(marker) {
                 if (target === marker) {
                     target.setMap(null);
@@ -246,7 +246,8 @@
         }
 
         /* MAIN */
-        google.maps.event.addDomListener(window, 'load', initialize);
+        // google.maps.event.addDomListener(window, 'load', initialize);
+        google.maps.event.addDomListener(window, 'load', getLocation());
     </script>
 
     <!-- CSS -->
@@ -265,8 +266,33 @@
             height: 100%;
         }
 
-        .map-icon {
-            width: 100px;
+        .map-info {
+            padding: 0;
+            margin: 0;
+        }
+
+        .map-info ul {
+            list-style-type: none;
+            width: 250px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 10px;
+        }
+
+        .map-info ul li img {
+            width: 250px;
+        }
+
+        .map-info ul li.album {
+            font-weight: bold;
+        }
+
+        .map-info ul li.artist {
+            font-weight: bold;
+        }
+
+        .map-info ul li.genre {
+            font-weight: bold;
         }
     </style>
 

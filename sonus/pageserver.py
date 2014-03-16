@@ -44,9 +44,12 @@ def get_static(file_type, filename):
 
 @config.app.route("/", methods=["GET"])
 def get_index():
-    return render_template(
-        "index.html"
-    )
+    return render_template("index.html")
+
+
+@config.app.route("/map")
+def map():
+    return render_template("map.html")
 
 
 @config.app.route("/song", methods=["POST"])
@@ -54,6 +57,7 @@ def song():
     db = get_db()
     userId = request.form.get('userId')
     songId = request.form.get('songId')
+    genre = request.form.get('genre')
     latitude = request.form.get('latitude')
     longitude = request.form.get('longitude')
     song = db.find_song({'songId': songId}) or db.add_song({'songId': songId})
@@ -67,7 +71,7 @@ def song():
     }
 
     # create song dict
-    song = {"songId": songId}
+    song = {"songId": songId, "genre": genre}
     song.setdefault('now', []).append(user)
     song.setdefault('total', []).append(user)
 
@@ -120,7 +124,7 @@ def fbData(authToken):
     musicListens="https://graph.facebook.com/me?fields=music.listens?access_token="+authToken
     print musicListens
     print urllib2.urlopen(musicListens).read()
-    
+
 @config.app.route("/authToken", methods=["POST"])
 def authToken():
 
@@ -160,9 +164,6 @@ def near(latitude, longitude, radius):
                 + str(user["location"]["longitude"])
             )
 
-            print "X", x
-            print "Y", y
-
             if len(x) > 1 and len(y) > 1:  # 1 because of comma
                 p1 = Point(x)
                 p2 = Point(y)
@@ -175,3 +176,18 @@ def near(latitude, longitude, radius):
                     break
 
     return jsonify({"songs": results})
+
+
+@config.app.route("/map/<genre>")
+def get_genre(genre):
+    results = {}
+    db = get_db()
+
+    # aggregate songs of a particular genre
+    songs = db.find_songs({})
+    for song in songs:
+        if song["genre"] and song["genre"] not in results:
+            results[song["genre"]] = []
+            results[song["genre"]].append(song)
+
+    return jsonify({"genres": results})
