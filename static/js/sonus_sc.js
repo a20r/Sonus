@@ -7,7 +7,7 @@ sonus.geocoder = null;
 sonus.greedyQuery = function (queryTerm) {
     SC.get('/tracks', {q: queryTerm}, function(tracks) {
         var track_url = tracks[0].permalink_url;
-        SC.oEmbed(track_url, {auto_play: false}, function(oEmbed) {
+        SC.oEmbed(track_url, {auto_play: true}, function(oEmbed) {
             $("#widget").html(oEmbed.html);
         });
     });
