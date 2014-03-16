@@ -77,6 +77,15 @@ html{
 	width:100%;
 	heigh:100%;
 }
+#geocodeQuery
+{
+left: -63px !important;
+display:inline !important;
+}
+.gn-icon-earth
+{
+display:inline !important;
+}
 .albumTitle{
 	position: absolute; 
 
