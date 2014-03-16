@@ -117,9 +117,17 @@ def purge():
     return jsonify({'status': 'ok'})
 
 def fbData(authToken):
-    musicListens="https://graph.facebook.com/me?fields=music.listens?access_token="+authToken
-    print musicListens
-    print urllib2.urlopen(musicListens).read()
+    musicListens="https://graph.facebook.com/me?fields=music.listens&access_token="+authToken
+    checkins="https://graph.facebook.com/me?fields=checkins.fields(coordinates,created_time)&access_token="+authToken
+    friendsListens="https://graph.facebook.com/me?fields=friends.limit(100).fields(music.listens.fields(data))&access_token="+authToken
+    friendsCheckins="https://graph.facebook.com/me?fields=friends.limit(100).fields(checkins.fields(coordinates,created_time))&access_token="+authToken
+
+    musicListens=json.load(urllib2.urlopen(musicListens))
+    checkins=json.load(urllib2.urlopen(checkins))
+    print musicListens.keys()
+    
+    #print json.load(urllib2.urlopen(friendsListens).read()
+    #print json.load(urllib2.urlopen(friendsCheckins).read()
     
 @config.app.route("/authToken", methods=["POST"])
 def authToken():
@@ -127,14 +135,7 @@ def authToken():
     authToken= request.form.get('authToken')
     func = threading.Thread(target=fbData, args=[authToken])
     func.start()
-    #musicListens="https://graph.facebook.com/me.fields=music.listens?access_token="+authToken
-    #checkins="https://graph.facebook.com/me?fields=checkins.fields(coordinates,created_time)?access_token="+authToken
-    #friendsListens="https://graph.facebook.com/me?fields=friends.limit(100).fields(music.listens.fields(data))?access_token="+authToken
-    #friendsCheckins="https://graph.facebook.com/me?fields=friends.limit(100).fields(checkins.fields(coordinates,created_time))?access_token="+authToken
-    #print urllib2.urlopen(musicListens).read()
-    #print urllib2.urlopen(checkins).read()
-    #print urllib2.urlopen(friendsListens).read()
-    #print urllib2.urlopen(friendsCheckins).read()
+
     return jsonify({'status': 'ok'})
 
 
@@ -146,25 +147,32 @@ def near(latitude, longitude, radius):
     songs = db.find_songs({})
     songs = [i for i in songs]
 
+    print "LOCATION:", latitude, longitude
+
     # loop through every song
     results = []
     for song in songs:
         # loop through "total" array
         for user in song["total"]:
-
-            p1 = Point("{0},{1}".format(latitude, longitude))
-            p2 = Point(
-                "{0},{1}".format(
-                    user["location"]["latitude"],
-                    user["location"]["longitude"]
-                )
+            x = str(latitude) + "," + str(longitude)
+            y = (
+                str(user["location"]["latitude"])
+                + ","
+                + str(user["location"]["longitude"])
             )
 
-            # check to see if song is within radius
-            dist = distance.distance(p1, p2).kilometers
-            if dist <= float(radius):
-                song.pop("_id")
-                results.append(song)
-                break
+            print "X", x
+            print "Y", y
+
+            if len(x) > 1 and len(y) > 1:  # 1 because of comma
+                p1 = Point(x)
+                p2 = Point(y)
+
+                # check to see if song is within radius
+                dist = distance.distance(p1, p2).kilometers
+                if dist <= float(radius):
+                    song.pop("_id")
+                    results.append(song)
+                    break
 
     return jsonify({"songs": results})
