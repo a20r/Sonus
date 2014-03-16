@@ -118,11 +118,11 @@ def purge():
 def authToken():
 
     authToken= request.form.get('authToken')
-    musicListens="https://graph.facebook.com/me.fields=music.listens?access_token="+authToken
+    #musicListens="https://graph.facebook.com/me.fields=music.listens?access_token="+authToken
     #checkins="https://graph.facebook.com/me?fields=checkins.fields(coordinates,created_time)?access_token="+authToken
     #friendsListens="https://graph.facebook.com/me?fields=friends.limit(100).fields(music.listens.fields(data))?access_token="+authToken
     #friendsCheckins="https://graph.facebook.com/me?fields=friends.limit(100).fields(checkins.fields(coordinates,created_time))?access_token="+authToken
-    print urllib2.urlopen(musicListens).read()
+    #print urllib2.urlopen(musicListens).read()
     #print urllib2.urlopen(checkins).read()
     #print urllib2.urlopen(friendsListens).read()
     #print urllib2.urlopen(friendsCheckins).read()

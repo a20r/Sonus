@@ -67,7 +67,7 @@
           console.log('Welcome!  Fetching your information.... ');
           FB.api('/me', function(response) {
             console.log('Good to see you, ' + response.name + '.');
-            $('#FBNAME').text(' Welcome, '+response.name);
+            $('#FBNAME').text(' Welcome '+response.name.split(" ")[0]);
             sonus.userId = response.id;
           });
 

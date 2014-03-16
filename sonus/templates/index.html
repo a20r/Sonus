@@ -21,6 +21,7 @@
     <!-- <script src="js/animate.js"></script> -->
     <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
     <script src="http://connect.soundcloud.com/sdk.js"></script>
+    <script type="text/javascript" src="/js/soundcloud.player.api.js"></script>
 	<script src="js/sonus_sc.js"></script>
 	<script src="js/modernizr.custom.js"></script>
     <script src="js/masonry.pkgd.min.js"></script>
@@ -37,7 +38,11 @@
 								<form id="form">
 									<input id="query" placeholder="Enter song name" type="text" class="gn-search" >
 								</form>
-								<a class="gn-icon gn-icon-search"><span>Search</span></a>
+							</li>
+                            <li class="gn-search-item">
+								<form id="geoForm">
+									<input id="geocodeQuery" placeholder="Enter location description" type="text" class="gn-search" >
+								</form>
 							</li>
 							<li id="nearMe">
 								<a class="gn-icon gn-icon-download">What's trending?</a>
@@ -47,17 +52,13 @@
 					</div><!-- /gn-scroller -->
 				</nav>
 			</li>
-			
 			<li id='introTitle'>Sonus <span>
 			<li id="FBLOGIN"><a class="" href="#"><i class="fa fa-facebook-square"></i><span id="FBNAME"> Log In With Facebook</span></a></li>
 		</ul>
-        
 		<header id="resultsTable">
 			<div id='logo'><img  src="imgs/logo.png"></div>
 			<h1 id='intro'>Sonus <span>Find out what people are listening to around you</span></h1>
-		</header> 
-
-    
+		</header>
 	<script src="js/classie.js"></script>
 	<script src="js/gnmenu.js"></script>
 	<script>
