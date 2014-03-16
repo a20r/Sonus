@@ -70,7 +70,7 @@ sonus.scQuery = function (queryTerm) {
     SC.get('/tracks', {q: queryTerm}, function(tracks) {
         tracks.map(sonus.manageTracks);
     });
-    $('#menuButton').click()
+    $('#resultsTable').click()
     $('#resultsTable').css('position','static');
 }
 
@@ -120,7 +120,7 @@ sonus.locationUpdateUI = function(lat, lng) {
                     sonus.manageTracks(scJson);
                 });
             });
-            $('#menuButton').click()
+            $('#resultsTable').click()
             $('#resultsTable').css('position','static');
     });
 }
@@ -153,6 +153,7 @@ sonus.init = function () {
     });
 
     sonus.geocoder = new google.maps.Geocoder();
+
 }
 
 sonus.geocodeUpdateUI = function (addr) {
@@ -193,6 +194,7 @@ function imgError(valId){
 window.onload = sonus.init;
 
 $(document).ready(function () {
+
     $("#introTitle").hide();
     $("#logo").hide();
     $("#logo").fadeIn(2000, function() {
@@ -203,11 +205,12 @@ $(document).ready(function () {
         $("#intro").fadeOut(1000, function() {
             $("#introTitle").fadeIn(1000);
 
-            $("#nearMe").click();
+            $("#nearMe").click(); 
         });
     });
 
     $(".item").on('click', function (event) {
         alert(event.target.id);
     });
+
 });
