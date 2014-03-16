@@ -118,7 +118,7 @@ var trip5 = new Trip([
               }, {scope: 'user_checkins,user_actions.music,friends_actions.music,friends_checkins'});
           });
           
-          trip5.start();
+          //trip5.start();
         // Here we subscribe to the auth.authResponseChange JavaScript event. This event is fired
         // for any authentication related change, such as login, logout or session refresh. This means that
         // whenever someone who was previously logged out tries to log in again, the correct case below 
