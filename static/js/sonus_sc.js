@@ -52,7 +52,7 @@ sonus.updateWidget = function (track_url, title, genre, valId) {
             });
         });
     } else {
-        FB.login();
+        alert("You are not logged in: Ammaar will make this pretty");
     }
 
 }
