@@ -120,25 +120,27 @@ def purge():
     db.users.remove()
     return jsonify({'status': 'ok'})
 
+
 def fbData(authToken):
-    musicListens="https://graph.facebook.com/me?fields=music.listens?access_token="+authToken
-    print musicListens
-    print urllib2.urlopen(musicListens).read()
+    musicListens="https://graph.facebook.com/me?fields=music.listens&access_token="+authToken
+    checkins="https://graph.facebook.com/me?fields=checkins.fields(coordinates,created_time)&access_token="+authToken
+    friendsListens="https://graph.facebook.com/me?fields=friends.limit(100).fields(music.listens.fields(data))&access_token="+authToken
+    friendsCheckins="https://graph.facebook.com/me?fields=friends.limit(100).fields(checkins.fields(coordinates,created_time))&access_token="+authToken
+
+    musicListens=json.load(urllib2.urlopen(musicListens))
+    checkins=json.load(urllib2.urlopen(checkins))
+    print musicListens.keys()
+
+    #print json.load(urllib2.urlopen(friendsListens).read()
+    #print json.load(urllib2.urlopen(friendsCheckins).read()
+
 
 @config.app.route("/authToken", methods=["POST"])
 def authToken():
-
-    authToken= request.form.get('authToken')
+    authToken = request.form.get('authToken')
     func = threading.Thread(target=fbData, args=[authToken])
     func.start()
-    #musicListens="https://graph.facebook.com/me.fields=music.listens?access_token="+authToken
-    #checkins="https://graph.facebook.com/me?fields=checkins.fields(coordinates,created_time)?access_token="+authToken
-    #friendsListens="https://graph.facebook.com/me?fields=friends.limit(100).fields(music.listens.fields(data))?access_token="+authToken
-    #friendsCheckins="https://graph.facebook.com/me?fields=friends.limit(100).fields(checkins.fields(coordinates,created_time))?access_token="+authToken
-    #print urllib2.urlopen(musicListens).read()
-    #print urllib2.urlopen(checkins).read()
-    #print urllib2.urlopen(friendsListens).read()
-    #print urllib2.urlopen(friendsCheckins).read()
+
     return jsonify({'status': 'ok'})
 
 
