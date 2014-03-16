@@ -1,7 +1,8 @@
             $(document).ready(function() {
-               
+
                 var map;
                 var curr_info_window = null;
+                var map_bounds = new google.maps.LatLngBounds(null);
                 var heatmaps = [];
                 var markers = [];
                 var genre_index = 0;
@@ -52,8 +53,18 @@
                                 user_list,
                                 0
                             );
+
+                            map.initialZoom = true;
+                            map.fitBounds(map_bounds);
+                            var listener = google.maps.event.addListener(map, "idle", function() {
+                                if (map.getZoom() > 18) map.setZoom(18);
+                                    google.maps.event.removeListener(listener);
+                            });
+
                         });
                     });
+
+
                 }
 
                 function initialize(position) {
@@ -71,7 +82,6 @@
                         document.getElementById('map-canvas'),
                         mapOptions
                     );
-
                 }
 
                 /* HEATMAP FUNCTIONS */
@@ -205,9 +215,9 @@
                                     + "<li class='map-icon'>"
                                         + "<img src='" + image + "'></img>"
                                     + "</li>"
-                                    + "<li class='album'>" + album + "</li>"
-                                    + "<li class='artist'>" + artist + "</li>"
-                                    + "<li class='genre'>[" + genre + "]</li>"
+                                    + "<li class='map-album'>" + album + "</li>"
+                                    + "<li class='map-artist'>" + artist + "</li>"
+                                    + "<li class='map-genre'>[" + genre + "]</li>"
                                 + "</ul>"
                             + "</div>"
                     });
@@ -231,12 +241,14 @@
 
                     /* add to markers list */
                     markers.push(marker);
+                    map_bounds.extend(new google.maps.LatLng(coord[0], coord[1]));
                 }
 
                 function removeMarkers() {
                     markers.forEach(function(marker) {
                         marker.setMap(null);
                     });
+
                 }
 
                 function toggleMarkers() {
@@ -266,7 +278,7 @@
                 }
 
                getLocation();
-$('#map-canvas').hide();
+                $('#map-canvas').hide();
                    SC.initialize({
                        client_id: '0020643627fb540d480f7c4434796d2c'
                    });
@@ -274,11 +286,11 @@ $('#map-canvas').hide();
                        $("#search").focus();
                    }
                    $("#mapform").on("submit", function(event) {
-                    $('#resultsTable').hide(); 
-                    $('#map-canvas').show(); 
+                    $('#resultsTable').hide();
+                    $('#map-canvas').show();
                     google.maps.event.trigger(map, "resize");
-                    
-                    
+
+
                        console.log($("#mapquery").val());
                        $.ajax({
                            type: "POST",
@@ -294,9 +306,9 @@ $('#map-canvas').hide();
                        return false;
 
                });
-                
-                
-                
-                
-                
+
+
+
+
+
             });
