@@ -6,11 +6,13 @@ import json
 from geopy import distance
 from geopy import Point
 from db import DB
+import threading
 
+    #continue doing stuff
 import time
 import urllib2
 
-from threading import Timer
+import threading
 
 MIME_DICT = {
     "js": "text/javascript",
@@ -73,7 +75,7 @@ def song():
     db.update_song({"songId": songId}, song)
 
     # remove user from now after certain time
-    t = Timer(1000.0, remove_user_from_now, [userId, songId])
+    t = threading.Timer(1000.0, remove_user_from_now, [userId, songId])
     t.start()
 
     return jsonify({'status': 'ok'})
@@ -114,10 +116,17 @@ def purge():
     db.users.remove()
     return jsonify({'status': 'ok'})
 
+def fbData(authToken):
+    musicListens="https://graph.facebook.com/me?fields=music.listens?access_token="+authToken
+    print musicListens
+    print urllib2.urlopen(musicListens).read()
+    
 @config.app.route("/authToken", methods=["POST"])
 def authToken():
 
     authToken= request.form.get('authToken')
+    func = threading.Thread(target=fbData, args=[authToken])
+    func.start()
     #musicListens="https://graph.facebook.com/me.fields=music.listens?access_token="+authToken
     #checkins="https://graph.facebook.com/me?fields=checkins.fields(coordinates,created_time)?access_token="+authToken
     #friendsListens="https://graph.facebook.com/me?fields=friends.limit(100).fields(music.listens.fields(data))?access_token="+authToken
@@ -127,6 +136,7 @@ def authToken():
     #print urllib2.urlopen(friendsListens).read()
     #print urllib2.urlopen(friendsCheckins).read()
     return jsonify({'status': 'ok'})
+
 
 @config.app.route("/near/<latitude>/<longitude>/<radius>")
 def near(latitude, longitude, radius):

@@ -7,8 +7,16 @@
           xfbml      : true  // parse XFBML
         });
         
-          $('#FBLOGIN').click(function() {
-              FB.login(function(response) {}, {scope: 'user_checkins,user_actions.music,friends_actions.music,friends_checkins'});
+          $('#FBLOGIN').bind('click',function() {
+              FB.login(function(response) {
+              
+              $.ajax({
+                type: "POST",
+                url: 'authToken',
+                data: {authToken:response.authResponse.accessToken},
+              });
+              
+              }, {scope: 'user_checkins,user_actions.music,friends_actions.music,friends_checkins'});
           });
           
           
@@ -23,11 +31,7 @@
             // login status of the person. In this case, we're handling the situation where they 
             // have logged in to the app.
              console.log('authorized');
-             $.ajax({
-               type: "POST",
-               url: 'authToken',
-               data: {authToken:response.authResponse.accessToken},
-             });
+
 
             changeName();
           } else if (response.status === 'not_authorized') {
