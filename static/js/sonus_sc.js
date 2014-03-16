@@ -2,6 +2,7 @@
 var sonus = sonus || {};
 
 sonus.userId = null;
+sonus.geocoder = null;
 
 sonus.greedyQuery = function (queryTerm) {
     SC.get('/tracks', {q: queryTerm}, function(tracks) {
@@ -15,7 +16,7 @@ sonus.greedyQuery = function (queryTerm) {
 sonus.updateWidget = function (track_url, title, genre, valId) {
 
     if (sonus.userId != null) {
-        SC.oEmbed(track_url, {auto_play: false}, function (oEmbed) {
+        SC.oEmbed(track_url, {auto_play: true}, function (oEmbed) {
             $("#" + valId).html(oEmbed.html);
         });
 
@@ -90,7 +91,6 @@ sonus.manageTracks = function (val) {
     ).hide();
     $("#resultsTable").fadeIn('slow');
     $("#" + val.id).click(function(event) {
-        console.log(event);
         sonus.updateWidget(
             event.currentTarget.dataset.track_url,
             event.currentTarget.dataset.title,
@@ -99,6 +99,26 @@ sonus.manageTracks = function (val) {
         );
     });
 }
+
+sonus.locationUpdateUI = function(lat, lng) {
+    $.getJSON("/near/" + lat+ "/" + lng + "/5", function(json) {
+            $('#resultsTable').html("");
+            var $container = $('#resultsTable');
+                $container.masonry({
+                columnWidth: 200,
+                itemSelector: '.item'
+            });
+            songs = json["songs"];
+            songs.forEach(function(song) {
+                SC.get("/tracks/" + song["songId"], function (scJson) {
+                    sonus.manageTracks(scJson);
+                });
+            });
+            $('#resultsTable').click()
+            $('#resultsTable').css('position','static');
+    });
+}
+
 
 sonus.init = function () {
     SC.initialize({
@@ -111,28 +131,32 @@ sonus.init = function () {
         return false;
     });
 
+    $("#geoForm").on("submit", function () {
+        sonus.geocodeUpdateUI($("#geocodeQuery").val());
+        return false;
+    });
+
     $("#nearMe").click(function () {
         sonus.getLocation(function (position) {
-            $.getJSON("/near/" + position.coords.latitude + "/" +
-                position.coords.longitude + "/5", function(json) {
-                    $('#resultsTable').html("");
-                    var $container = $('#resultsTable');
-                        $container.masonry({
-                        columnWidth: 200,
-                        itemSelector: '.item'
-                    });
-                    songs = json["songs"];
-                    songs.forEach(function(song) {
-                        SC.get("/tracks/" + song["songId"], function (scJson) {
-                            sonus.manageTracks(scJson);
-                        });
-                    });
-                    $('#resultsTable').click()
-                    $('#resultsTable').css('position','static');
-            });
+            sonus.locationUpdateUI(
+                position.coords.latitude,
+                position.coords.longitude
+            );
         });
     });
 
+    sonus.geocoder = new google.maps.Geocoder();
+}
+
+sonus.geocodeUpdateUI = function (addr) {
+    sonus.geocoder.geocode({address: addr}, function (results, stat) {
+        if (stat == google.maps.GeocoderStatus.OK) {
+            sonus.locationUpdateUI(
+                results[0].geometry.location.lat(),
+                results[0].geometry.location.lng()
+            );
+        }
+    });
 }
 
 // Sets the locaction event handlers
@@ -155,27 +179,28 @@ sonus.getLocation = function (onSuccess, onError) {
         alert("Geolocation is not supported by this browser");
     }
 }
- function imgError(valId){
-        $("#"+valId).remove();
-    }
+
+function imgError(valId){
+    $("#"+valId).remove();
+}
 window.onload = sonus.init;
 
-    $(document).ready(function () {
-        $("#introTitle").hide();
-        $("#logo").hide();
+$(document).ready(function () {
+    $("#introTitle").hide();
+    $("#logo").hide();
     $("#logo").fadeIn(2000, function() {
-    $("#logo").fadeOut(1000);
-  });
-        $("#intro").hide();
-      $("#intro").fadeIn(2000, function() {
-      $("#intro").fadeOut(1000, function() {
-      $("#introTitle").fadeIn(1000);
-
-      $("#nearMe").click();
+        $("#logo").fadeOut(1000);
     });
+    $("#intro").hide();
+    $("#intro").fadeIn(2000, function() {
+        $("#intro").fadeOut(1000, function() {
+            $("#introTitle").fadeIn(1000);
+
+            // $("#nearMe").click();
+        });
     });
 
     $(".item").on('click', function (event) {
-                    alert(event.target.id);
+        alert(event.target.id);
     });
 });
